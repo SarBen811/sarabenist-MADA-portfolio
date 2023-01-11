@@ -3,6 +3,26 @@ title: "About me"
 output: 
   html_document:
       toc: FALSE
+format:
+  html:
+    theme: cosmo
+    highlight: zenburn
+    css: styles.css
+    toc: FALSE
 ---
 
-Add some text and a figure describing myself.
+Hello!
+
+![](Picture1.jpg){width="1500"}
+
+## [Introducing me!]{.underline}
+
+My name is Sara Benist, and I am a second year Master of Public Health student at the University of Georgia concentrating in Epidemiology. After completing my undergraduate degree in Health Promotion from UGA, I served my community as an AmeriCorps VISTA member and leader for two years at the Georgia-based non-profit Helping Mamas before returning to school for my Master's degree.
+
+With my BS in Health Promotion and MPH, I have a background in fundamental epidemiology practices, writing professional papers including policy memos and meta-analyses, and other public health practices. I have fundamental knowledge in **SAS** and **Stata** through my Introductory Biostatistics and Epidemiology courses, and my **Foundations in R Coding** course provided a solid foundation in R and its related programs. I enjoy coding in R for the flexibility in what I can code as well as the versatility of the programming language. With the MADA course, I would like to build upon my coding knowledge and learn more about real-world data analysis practices and be confident in performing them.
+
+Fun fact: I was in the Redcoat Marching Band at UGA while I was an undergrad! Here I am waiting for the Rose Bowl Parade to start (it was an awesome *exhausting* day!)
+
+![](Picture2.jpg)
+
+## [Something I Find Cool]{.underline}

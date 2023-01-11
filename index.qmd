@@ -1,16 +1,17 @@
 ---
-title: "My website and data analysis portfolio"
+title: "Portfolio for Modern Applied Data Analysis"
 output: 
   html_document:
     toc: FALSE
 ---
 
-# Hello
+# Hello! My name is Sara Benist. 
 
-### And hello again
+### Welcome to my webpage!
 
-Welcome to **my website** and _data analysis portfolio._ 
+This website was created for my _Data Analysis class_ at the University of Georgia. 
 
 
 * Please use the `Menu Bar` above to look around.
 * Have fun!
+* Contact me at sara.benist25@uga.edu
