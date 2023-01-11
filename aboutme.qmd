@@ -13,7 +13,7 @@ format:
 
 Hello!
 
-![](Picture1.jpg){width="1500"}
+![](Picture1.jpg){width="750"}
 
 ## [Introducing me!]{.underline}
 
