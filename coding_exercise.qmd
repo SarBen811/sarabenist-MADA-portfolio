@@ -5,4 +5,104 @@ output:
     toc: FALSE
 ---
 
-Placeholder file for the future R coding exercise.
+*This page is the introductory coding exercise in R for this class. I will be working with the dslabs package data to perform data processing, visual plotting, and model fitting.*
+
+## Receiving and summarizing data
+
+```{r Packages}
+#| output: false
+#Load package
+library(dslabs)
+library(tidyverse)
+library(dplyr)
+```
+
+```{r Gapminder Summary}
+#Look at help file for gapminder dataset
+help(gapminder)
+#the gapminder dataset contains health and income outcomes for 184 countries from 1960 to 2016.
+
+#get an overview of the data structure
+str(gapminder)
+
+#get a summary of data
+summary(gapminder)
+
+#determine the type of object gapminder is
+class(gapminder)
+```
+
+## Subset data
+
+```{r Making africadata}
+#pull out data points (rows) related to Africa and assign to object `africadata`
+africadata <- filter(gapminder, continent == "Africa")
+
+#check new object
+str(africadata)
+summary(africadata)
+```
+
+Note that only rows where Africa is listed as the continent are in this dataset (2907 observations)
+
+```{r Subset columns}
+#Now, pull out the columns for infant mortality & life expectancy and population & life expectancy for African countries and assign to objects
+MortExpec <- africadata %>% select(infant_mortality, life_expectancy)
+
+PopExpec <- africadata %>% select(life_expectancy, population)
+
+#view MortExpec object
+str(MortExpec)
+summary(MortExpec)
+
+#view PopExpec object
+str(PopExpec)
+summary(PopExpec)
+
+```
+
+For both new objects, all observations were used (2907 rows) but each object has two columns (two variables each). All other variables (including country) have been removed.
+
+## Plotting the data
+
+```{r Scatter plots}
+#| label: fig1
+#| fig-cap: Life expectancy vs infant mortality
+#plot life expectancy as a function of infant mortality
+ggplot(MortExpec) +
+  geom_point(aes(infant_mortality, life_expectancy))
+
+#| label: fig2
+#| fig-cap: Life expectancy vs population size
+#plot life expectancy as a function of population size
+ggplot(PopExpec) +
+  geom_point(aes(population, life_expectancy))+
+  scale_x_continuous(trans = "log")
+
+```
+
+@fig1 show that life expectancy has a negative correlation with infant mortality. As infant mortality increases, life expectancy decreases. The warning message indicated 226 data points could not be plotted.
+
+@fig2 shows that life expectancy has a positive correlation with population size. As population increases, life expectancy increases. Note that some data points seem to trend together; this is because the grouped data is from the same country over multiple years. The warning message indicated that 51 points could not be plotted.
+
+## Data cleaning
+
+As noted in the plotting stage, there are some missing data points for some countries for some years. Let's try to find the years with missing data.
+
+```{r Finding NAs}
+#find years with missing data using `africadata`
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
