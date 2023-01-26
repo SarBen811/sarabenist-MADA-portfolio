@@ -186,6 +186,119 @@ Population size is not a valid predictor of life expectancy because the p-value 
 
 
 
+*Nathan Greenslit's Work Below*
+
+# Load Broom Library
+```{r}
+library(broom)
+```
+
+
+# Looking at whole dataset
+```{r}
+gapminder<- gapminder
+```
+
+# Looking at only the United States
+```{r}
+us <-
+  gapminder %>% 
+  filter(country %in% "United States")
+str(us)
+summary(us) 
+```
+*Looks like 2016 has NA*
+
+# Filter out NAs in 2016 in Fertility
+```{r}
+us.clean <- 
+  us %>%
+  filter(!is.na(fertility))
+```
+
+
+
+# Fertility in the US over time
+```{r}
+us.clean %>% ggplot() +
+  geom_point(
+    aes(
+      x = year,
+      y = fertility),
+    color = "darkgreen") + 
+  geom_line(
+    aes(
+      x = year,
+      y = fertility),
+    color = "darkgreen")+
+  labs(
+    x = "Year",
+    y = "Fertility (Avg. # Children per Woman)",
+    title = "Fertility in the United States (1960-2015)")+
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+*There is a significant drop in the number of children per woman over time. There could be due to a few things: (1) An increase in women's empowerment in the workforce, (2) increased cost of raising children, and (3) lower child mortality. With the data set we have, I am using infant_mortality to explore the 3rd hypothesis: a decrease in child mortality is correlated to a drop in children per woman.*
+
+# Infant Mortality in the US over time
+```{r}
+us.clean %>% ggplot() +
+  geom_point(
+    aes(
+      x = year,
+      y = infant_mortality),
+    color = "darkgreen") + 
+  geom_line(
+    aes(
+      x = year,
+      y = infant_mortality),
+    color = "darkgreen")+
+  labs(
+    x = "Year",
+    y = "Infant Mortality (Infant Deaths per 1000)",
+    title = "Infant Mortality in the United States (1960-2015)")+
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+# Fertility as a function of Infant Mortality
+```{r}
+us.clean %>% ggplot() +
+  geom_point(
+    aes(
+      x = infant_mortality,
+      y = fertility),
+    color = "darkblue") + 
+  #geom_line(
+  #  aes(
+  #    x = infant_mortality,
+  #    y = fertility),
+  #  color = "darkblue")+
+geom_smooth(aes(
+  x = infant_mortality, 
+  y = fertility),
+  method = lm) +
+  labs(
+    x = "Infant Mortality (Infant Deaths per 1000)",
+    y = "Fertility (Avg. # Children per Woman)",
+    title = "Fertility as a function of Infant Mortality")+
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+# Linear Model to examine correlation between Fertility Drop and Decrease in Infant Mortality
+```{r, results = FALSE}
+fert.fit <- lm(infant_mortality~fertility, data = us.clean)
+summary(fert.fit)
+```
+
+
+# Making lm() output to a table using `broom` package
+```{r}
+tidy(fert.fit)
+```
+*A p-value of 5.38E-11 may indicate that there is a significant correlation between the drop in fertility and decrease in infant mortality in the US. An R2 value of .54 indicates that infant mortality is an okay predictor of fertility, but there is most likely other variables that play a role.*
 
 
 
