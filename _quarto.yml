@@ -26,5 +26,8 @@ format:
     highlight: zenburn
     css: styles.css
     toc: FALSE
+    
+execute:
+  freeze: auto  # re-render only when source changes
 
 

@@ -1013,6 +1013,183 @@ F-statistic: 0.2549 on 1 and 49 DF,  p-value: 0.6159</code></pre>
 </div>
 <p>Looking at the summary results, infant mortality appears to be a valid predictor of life expectancy (p-value&lt;0.001). Life expectancy decreases by 0.189 years with each increase in infant mortality (SE = 0.029, t = -6.594).</p>
 <p>Population size is not a valid predictor of life expectancy because the p-value is 0.616 which is not statistically significant.</p>
+<p><em>Nathan Greenslit’s Work Below</em></p>
+</section>
+<section id="load-broom-library" class="level1">
+<h1>Load Broom Library</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'broom' was built under R version 4.2.2</code></pre>
+</div>
+</div>
+</section>
+<section id="looking-at-whole-dataset" class="level1">
+<h1>Looking at whole dataset</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>gapminder<span class="ot">&lt;-</span> gapminder</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="looking-at-only-the-united-states" class="level1">
+<h1>Looking at only the United States</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>us <span class="ot">&lt;-</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  gapminder <span class="sc">%&gt;%</span> </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">%in%</span> <span class="st">"United States"</span>)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(us)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   57 obs. of  9 variables:
+ $ country         : Factor w/ 185 levels "Albania","Algeria",..: 176 176 176 176 176 176 176 176 176 176 ...
+ $ year            : int  1960 1961 1962 1963 1964 1965 1966 1967 1968 1969 ...
+ $ infant_mortality: num  25.9 25.4 24.9 24.4 23.8 23.3 22.7 22 21.3 20.6 ...
+ $ life_expectancy : num  69.9 70.3 70.2 70 70.3 ...
+ $ fertility       : num  3.67 3.63 3.48 3.35 3.22 2.93 2.71 2.56 2.47 2.46 ...
+ $ population      : num  1.86e+08 1.89e+08 1.92e+08 1.95e+08 1.97e+08 ...
+ $ gdp             : num  2.48e+12 2.54e+12 2.69e+12 2.81e+12 2.97e+12 ...
+ $ continent       : Factor w/ 5 levels "Africa","Americas",..: 2 2 2 2 2 2 2 2 2 2 ...
+ $ region          : Factor w/ 22 levels "Australia and New Zealand",..: 12 12 12 12 12 12 12 12 12 12 ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(us) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                country        year      infant_mortality life_expectancy
+ United States      :57   Min.   :1960   Min.   : 5.600   Min.   :69.91  
+ Albania            : 0   1st Qu.:1974   1st Qu.: 6.975   1st Qu.:72.08  
+ Algeria            : 0   Median :1988   Median :10.100   Median :75.02  
+ Angola             : 0   Mean   :1988   Mean   :12.375   Mean   :74.81  
+ Antigua and Barbuda: 0   3rd Qu.:2002   3rd Qu.:16.900   3rd Qu.:77.10  
+ Argentina          : 0   Max.   :2016   Max.   :25.900   Max.   :79.10  
+ (Other)            : 0                  NA's   :1                       
+   fertility       population             gdp               continent 
+ Min.   :1.740   Min.   :186176524   Min.   :2.479e+12   Africa  : 0  
+ 1st Qu.:1.870   1st Qu.:216524624   1st Qu.:4.238e+12   Americas:57  
+ Median :2.000   Median :246645306   Median :6.132e+12   Asia    : 0  
+ Mean   :2.153   Mean   :250998907   Mean   :6.652e+12   Europe  : 0  
+ 3rd Qu.:2.080   3rd Qu.:286464860   3rd Qu.:9.171e+12   Oceania : 0  
+ Max.   :3.670   Max.   :321773631   Max.   :1.174e+13                
+ NA's   :1       NA's   :1           NA's   :5                        
+                       region  
+ Northern America         :57  
+ Australia and New Zealand: 0  
+ Caribbean                : 0  
+ Central America          : 0  
+ Central Asia             : 0  
+ Eastern Africa           : 0  
+ (Other)                  : 0  </code></pre>
+</div>
+</div>
+<p><em>Looks like 2016 has NA</em></p>
+</section>
+<section id="filter-out-nas-in-2016-in-fertility" class="level1">
+<h1>Filter out NAs in 2016 in Fertility</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>us.clean <span class="ot">&lt;-</span> </span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  us <span class="sc">%&gt;%</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(fertility))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="fertility-in-the-us-over-time" class="level1">
+<h1>Fertility in the US over time</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>us.clean <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> year,</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> fertility),</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"darkgreen"</span>) <span class="sc">+</span> </span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> year,</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> fertility),</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"darkgreen"</span>)<span class="sc">+</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Fertility (Avg. # Children per Woman)"</span>,</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Fertility in the United States (1960-2015)"</span>)<span class="sc">+</span></span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="coding_exercise_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><em>There is a significant drop in the number of children per woman over time. There could be due to a few things: (1) An increase in women’s empowerment in the workforce, (2) increased cost of raising children, and (3) lower child mortality. With the data set we have, I am using infant_mortality to explore the 3rd hypothesis: a decrease in child mortality is correlated to a drop in children per woman.</em></p>
+</section>
+<section id="infant-mortality-in-the-us-over-time" class="level1">
+<h1>Infant Mortality in the US over time</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>us.clean <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> year,</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> infant_mortality),</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"darkgreen"</span>) <span class="sc">+</span> </span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> year,</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> infant_mortality),</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"darkgreen"</span>)<span class="sc">+</span></span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Infant Mortality (Infant Deaths per 1000)"</span>,</span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Infant Mortality in the United States (1960-2015)"</span>)<span class="sc">+</span></span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="coding_exercise_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="fertility-as-a-function-of-infant-mortality" class="level1">
+<h1>Fertility as a function of Infant Mortality</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>us.clean <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> infant_mortality,</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> fertility),</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"darkblue"</span>) <span class="sc">+</span> </span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#geom_line(</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  aes(</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#    x = infant_mortality,</span></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">#    y = fertility),</span></span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  color = "darkblue")+</span></span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_smooth</span>(<span class="fu">aes</span>(</span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> infant_mortality, </span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> fertility),</span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> lm) <span class="sc">+</span></span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Infant Mortality (Infant Deaths per 1000)"</span>,</span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Fertility (Avg. # Children per Woman)"</span>,</span>
+<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Fertility as a function of Infant Mortality"</span>)<span class="sc">+</span></span>
+<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="coding_exercise_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="linear-model-to-examine-correlation-between-fertility-drop-and-decrease-in-infant-mortality" class="level1">
+<h1>Linear Model to examine correlation between Fertility Drop and Decrease in Infant Mortality</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>fert.fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(infant_mortality<span class="sc">~</span>fertility, <span class="at">data =</span> us.clean)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fert.fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="making-lm-output-to-a-table-using-broom-package" class="level1">
+<h1>Making lm() output to a table using <code>broom</code> package</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(fert.fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term        estimate std.error statistic  p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)    -8.85      2.66     -3.32 1.60e- 3
+2 fertility       9.86      1.21      8.16 5.39e-11</code></pre>
+</div>
+</div>
+<p><em>A p-value of 5.38E-11 may indicate that there is a significant correlation between the drop in fertility and decrease in infant mortality in the US. An R2 value of .54 indicates that infant mortality is an okay predictor of fertility, but there is most likely other variables that play a role.</em></p>
 
 
 </section>
