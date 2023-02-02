@@ -28,27 +28,6 @@
     "text": "This page is the introductory coding exercise in R for this class. I will be working with the dslabs package data to perform data processing, visual plotting, and model fitting."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Portfolio for Modern Applied Data Analysis",
-    "section": "",
-    "text": "Hello! My name is Sara Benist.\n\nWelcome to my webpage!\nThis website was created for my Data Analysis class at the University of Georgia.\n\nPlease use the Menu Bar above to look around.\nHave fun!\nContact me at sara.benist25@uga.edu"
-  },
-  {
-    "objectID": "tidytuesday_exercise.html",
-    "href": "tidytuesday_exercise.html",
-    "title": "Tidy Tuesday Exercise",
-    "section": "",
-    "text": "Placeholder file for the future Tidy Tuesday exercise."
-  },
-  {
-    "objectID": "visualization_exercise.html",
-    "href": "visualization_exercise.html",
-    "title": "Visualization Exercise",
-    "section": "",
-    "text": "Placeholder file for the future visualization exercise."
-  },
-  {
     "objectID": "coding_exercise.html#receiving-and-summarizing-data",
     "href": "coding_exercise.html#receiving-and-summarizing-data",
     "title": "R Coding Exercise",
@@ -138,5 +117,26 @@
     "title": "Data Analysis Exercise",
     "section": "Select final columns of data",
     "text": "Select final columns of data\n\n#select age group columns, MMWR week, and Reporting Area and assign to cleandeathdata\ncleandeathdata <- data3 %>% \n  select(!contains(\"Flag\") & \n           -c(\"Location 1\", \"Location 2\", \"MMWR YEAR\", \n              \"All causes, by age (years), LT 1\", \"P&I† Total\"))\n\nsummary(cleandeathdata)\n\n Reporting Area       MMWR WEEK       AllAges         AgesOver65    \n Length:3322        Min.   : 1.0   Min.   :  0.00   Min.   :  0.00  \n Class :character   1st Qu.:13.0   1st Qu.: 23.00   1st Qu.: 16.00  \n Mode  :character   Median :26.0   Median : 41.00   Median : 30.00  \n                    Mean   :26.4   Mean   : 50.65   Mean   : 35.93  \n                    3rd Qu.:40.0   3rd Qu.: 68.00   3rd Qu.: 48.00  \n                    Max.   :52.0   Max.   :321.00   Max.   :236.00  \n   Ages45to64      Ages25to44       Ages1to24      \n Min.   : 0.00   Min.   : 0.000   Min.   : 0.0000  \n 1st Qu.: 4.00   1st Qu.: 1.000   1st Qu.: 0.0000  \n Median : 9.00   Median : 2.000   Median : 0.0000  \n Mean   :10.92   Mean   : 2.668   Mean   : 0.6409  \n 3rd Qu.:15.00   3rd Qu.: 4.000   3rd Qu.: 1.0000  \n Max.   :79.00   Max.   :27.000   Max.   :18.0000  \n\n\nThe final dataframe cleandeathdata contains information for 122 cities that reported weekly number of deaths due to pneumonia or influenza by age group in 2015.\n\n#save cleaned data in RDS file in cleandata folder\nsaveRDS(cleandeathdata, file = \"dataanalysis_exercise/cleandata/cleandeathdata.rds\")\n\n#save summary table as RDS file in results folder\nsummarytable = data.frame(do.call(cbind, lapply(cleandeathdata, summary)))\nprint(summarytable)\n\n        Reporting.Area        MMWR.WEEK          AllAges       AgesOver65\nMin.              3322                1                0                0\n1st Qu.      character               13               23               16\nMedian       character               26               41               30\nMean              3322 26.4021673690548 50.6493076459964 35.9292594822396\n3rd Qu.      character               40               68               48\nMax.         character               52              321              236\n             Ages45to64      Ages25to44         Ages1to24\nMin.                  0               0                 0\n1st Qu.               4               1                 0\nMedian                9               2                 0\nMean    10.917820590006 2.6676700782661 0.640878988561108\n3rd Qu.              15               4                 1\nMax.                 79              27                18\n\nsaveRDS(summarytable, file = \"dataanalysis_exercise/results/summarytable.rds\")"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Portfolio for Modern Applied Data Analysis",
+    "section": "",
+    "text": "Hello! My name is Sara Benist.\n\nWelcome to my webpage!\nThis website was created for my Data Analysis class at the University of Georgia.\n\nPlease use the Menu Bar above to look around.\nHave fun!\nContact me at sara.benist25@uga.edu"
+  },
+  {
+    "objectID": "tidytuesday_exercise.html",
+    "href": "tidytuesday_exercise.html",
+    "title": "Tidy Tuesday Exercise",
+    "section": "",
+    "text": "Placeholder file for the future Tidy Tuesday exercise."
+  },
+  {
+    "objectID": "visualization_exercise.html",
+    "href": "visualization_exercise.html",
+    "title": "Visualization Exercise",
+    "section": "",
+    "text": "Placeholder file for the future visualization exercise."
   }
 ]

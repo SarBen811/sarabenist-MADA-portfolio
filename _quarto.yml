@@ -29,6 +29,8 @@ format:
     css: styles.css
     toc: FALSE
     
-
+execute: 
+  freeze: auto
+  
 
 
