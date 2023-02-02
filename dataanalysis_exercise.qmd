@@ -1,6 +1,5 @@
 ---
 title: "Data Analysis Exercise"
-editor: visual
 output:
   html_document:
     toc: FALSE
