@@ -1,8 +1,6 @@
 ---
 title: "Data Analysis Exercise"
-output:
-  html_document:
-    toc: FALSE
+output: html_document
 ---
 
 This page will be used for my first exercise in data analysis involving data importing and wrangling.
