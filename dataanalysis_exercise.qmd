@@ -1,0 +1,125 @@
+---
+title: "Data Analysis Exercise"
+editor: visual
+output:
+  html_document:
+    toc: FALSE
+---
+
+This page will be used for my first exercise in data analysis involving data importing and wrangling.
+
+## Describing the data source
+
+I chose the use the CDC dataset documenting the [deaths in 122 US cities from pneumonia or influenza by age group in 2015](https://data.cdc.gov/dataset/TABLE-III-Deaths-in-122-U-S-cities/7esm-uptm). These deaths were counted if the death certificates indicated that pneumonia or influenza was listed as underlying or contributed as cause of death. The data was obtained by voluntary reporting from each city for each week of 2015. If data was unavailable, a "U" was inputted, and if no cases were reported, a dash (-) was inputted.
+
+## Potential research question
+
+When I came across this dataset, my initial research question was to explore the trends in pneumonia and influenza deaths in 2015 by age groups. This can also be further analyzed by city, state, or even region of the US. For now, I will focus on setting up a complete dataset by age group.
+
+## Load packages
+
+```{r}
+#| output: false
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(naniar)
+```
+
+## Importing the data
+
+To import the data, I will be using `read_csv()` from the `readr` package.
+
+```{r}
+# import data and assign to deathdata
+deathdata <- read_csv("dataanalysis_exercise/rawdata/TABLE_III._Deaths_in_122_U.S._cities.csv")
+
+#view general aspects about data
+summary(deathdata)
+str(deathdata)
+gg_miss_var(deathdata)
+```
+
+Looking at the `summary()` and `str()` output, the dataset has a row for each city (identified in the Reporting Area column) for each MMWR week of the year. The columns marked as flag only contains NAs and marked as character variables. The other columns contain the number of deaths for each age group. There are a total of 6864 observations. Notice also the dashes (representing no reported cases) does not accurately represent the report since the minimum for the age group columns is 1. Exploring further, the `gg_miss_var()` from the `naniar` package reports the number of missing values by variable, which the flagged and location columns having the highest number of missing data points.
+
+Note: in the original CDC database, the summary of the dataset indicated there would be ages groups of 65-75 years and 85+ years. I do not see those age groups on the actual data available.
+
+## Cleaning the data
+
+Let's start cleaning the data by changing the column names to something easier to work with. Since I am only interested in the age group columns, I will only be renaming these.
+
+```{r}
+#rename columns for easier cleaning and assign to RNdeathdata
+RNdeathdata <- deathdata %>% 
+  rename(AllAges = `All causes, by age (years), All Ages**`,
+         AllAgesFlag = `All causes, by age (years), All Ages**, flag`,
+         AgesOver65 = `All causes, by age (years), ?65`,
+         AgesOver65Flag = `All causes, by age (years), ?65, flag`,
+         Ages45to64 = `All causes, by age (years), 45–64`,
+         Ages45to64Flag = `All causes, by age (years), 45–64, flag`,
+         Ages25to44 = `All causes, by age (years), 25–44`,
+         Ages25to44Flag = `All causes, by age (years), 25–44, flag`,
+         Ages1to24 = `All causes, by age (years), 1–24`,
+         Ages1to24Flag = `All causes, by age (years), 1–24, flag`)
+```
+
+Next, I want to find which columns contain the dashes (for zero cases) and "U" for unreported data.
+
+```{r}
+#finding dashes and "U" in data set by column
+str_detect(RNdeathdata, "-")
+str_detect(RNdeathdata, "U")
+```
+
+Using the `str_detect()` function, we can see the same columns have dashes and "u" (except for the Reporting Area column which contains "u" as part of the city names). Looking back at the output from str() in the above step, the flagged columns as well as Location 1 column have the dashes and unreported data. Since I will be removing the flagged columns but want to preserve the values that are meant to be zero for that age group in that city for that week, I will translate the dashes into 0s for the corresponding columns.
+
+Let's go ahead and remove the rows with unreported data and change the dashes into 0s for the corresponding columns.
+
+```{r}
+#remove observations with unreported data and assign to data2
+data2<- RNdeathdata %>% 
+  filter(!`AgesOver65Flag` == "U" |
+         !`All causes, by age (years), LT 1, flag` == "U" |
+         !`Ages1to24Flag` == "U" |
+         !`Ages45to64Flag` == "U" |
+         !`Ages25to44Flag` == "U")
+
+#translate dashes from flagged columns into 0 for the corresponding age group columns and assign to data3
+data3 <- data2 %>% 
+  mutate(`AgesOver65` = case_when(`AgesOver65Flag` == "-" ~ 0, TRUE ~ AgesOver65),
+         `Ages45to64` = case_when(`Ages45to64Flag` == "-" ~ 0, TRUE ~ Ages45to64),
+         `Ages25to44` = case_when(`Ages25to44Flag` == "-" ~ 0, TRUE ~ Ages25to44),
+         `Ages1to24` = case_when(`Ages1to24Flag` == "-" ~ 0, TRUE ~ Ages1to24),
+         `AllAges` = case_when(`AllAgesFlag` == "-" ~ 0, TRUE ~ AllAges))
+
+#check for missing data
+gg_miss_var(data3)
+```
+
+As seen with the missing variable graph, we have full data sets for the non-flagged columns which means the observations in the flagged columns with dashes had NAs in the non-flagged age groups. Now we can remove those columns and focus only on the age groups. I also can remove the Year column since the data is from 2015.
+
+## Select final columns of data
+
+```{r}
+#select age group columns, MMWR week, and Reporting Area and assign to cleandeathdata
+cleandeathdata <- data3 %>% 
+  select(!contains("Flag") & 
+           -c("Location 1", "Location 2", "MMWR YEAR", 
+              "All causes, by age (years), LT 1", "P&I† Total"))
+
+summary(cleandeathdata)
+
+```
+
+The final dataframe `cleandeathdata` contains information for 122 cities that reported weekly number of deaths due to pneumonia or influenza by age group in 2015.
+
+```{r}
+#save cleaned data in RDS file in cleandata folder
+saveRDS(cleandeathdata, file = "dataanalysis_exercise/cleandata/cleandeathdata.rds")
+
+#save summary table as RDS file in results folder
+summarytable = data.frame(do.call(cbind, lapply(cleandeathdata, summary)))
+print(summarytable)
+
+saveRDS(summarytable, file = "dataanalysis_exercise/results/summarytable.rds")
+```

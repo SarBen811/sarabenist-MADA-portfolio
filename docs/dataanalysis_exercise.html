@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>My Data Analysis Portfolio - Data Analysis Exercise</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">My Data Analysis Portfolio</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="././aboutme.html">
+ <span class="menu-text">About Me</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-projects" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Projects</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-projects">    
+        <li>
+    <a class="dropdown-item" href="././coding_exercise.html">
+ <span class="dropdown-text">R Coding Exercise</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="././visualization_exercise.html">
+ <span class="dropdown-text">Visualization Exercise</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="././tidytuesday_exercise.html">
+ <span class="dropdown-text">Tidy Tuesday Exercise</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="././dataanalysis_exercise.html">
+ <span class="dropdown-text">Data Analysis Exercise</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/SarBen811/sarabenist-MADA-portfolio"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data Analysis Exercise</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>This page will be used for my first exercise in data analysis involving data importing and wrangling.</p>
+<section id="describing-the-data-source" class="level2">
+<h2 class="anchored" data-anchor-id="describing-the-data-source">Describing the data source</h2>
+<p>I chose the use the CDC dataset documenting the <a href="https://data.cdc.gov/dataset/TABLE-III-Deaths-in-122-U-S-cities/7esm-uptm">deaths in 122 US cities from pneumonia or influenza by age group in 2015</a>. These deaths were counted if the death certificates indicated that pneumonia or influenza was listed as underlying or contributed as cause of death. The data was obtained by voluntary reporting from each city for each week of 2015. If data was unavailable, a “U” was inputted, and if no cases were reported, a dash (-) was inputted.</p>
+</section>
+<section id="potential-research-question" class="level2">
+<h2 class="anchored" data-anchor-id="potential-research-question">Potential research question</h2>
+<p>When I came across this dataset, my initial research question was to explore the trends in pneumonia and influenza deaths in 2015 by age groups. This can also be further analyzed by city, state, or even region of the US. For now, I will focus on setting up a complete dataset by age group.</p>
+</section>
+<section id="load-packages" class="level2">
+<h2 class="anchored" data-anchor-id="load-packages">Load packages</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="importing-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="importing-the-data">Importing the data</h2>
+<p>To import the data, I will be using <code>read_csv()</code> from the <code>readr</code> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import data and assign to deathdata</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>deathdata <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"dataanalysis_exercise/rawdata/TABLE_III._Deaths_in_122_U.S._cities.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 6864 Columns: 19
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (9): Reporting Area, All causes, by age (years), All Ages**, flag, All c...
+dbl (9): MMWR YEAR, MMWR WEEK, All causes, by age (years), All Ages**, All c...
+lgl (1): Location 2
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#view general aspects about data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(deathdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Reporting Area       MMWR YEAR      MMWR WEEK    
+ Length:6864        Min.   :2015   Min.   : 1.00  
+ Class :character   1st Qu.:2015   1st Qu.:13.75  
+ Mode  :character   Median :2015   Median :26.50  
+                    Mean   :2015   Mean   :26.50  
+                    3rd Qu.:2015   3rd Qu.:39.25  
+                    Max.   :2015   Max.   :52.00  
+                                                  
+ All causes, by age (years), All Ages**
+ Min.   :    1.0                       
+ 1st Qu.:   40.0                       
+ Median :   78.0                       
+ Mean   :  278.1                       
+ 3rd Qu.:  151.0                       
+ Max.   :15261.0                       
+ NA's   :313                           
+ All causes, by age (years), All Ages**, flag All causes, by age (years), ?65
+ Length:6864                                  Min.   :    1.0                
+ Class :character                             1st Qu.:   28.0                
+ Mode  :character                             Median :   53.0                
+                                              Mean   :  188.5                
+                                              3rd Qu.:  101.0                
+                                              Max.   :10569.0                
+                                              NA's   :318                    
+ All causes, by age (years), ?65, flag All causes, by age (years), 45–64
+ Length:6864                           Min.   :   1.00                  
+ Class :character                      1st Qu.:   8.00                  
+ Mode  :character                      Median :  18.00                  
+                                       Mean   :  63.68                  
+                                       3rd Qu.:  36.00                  
+                                       Max.   :3361.00                  
+                                       NA's   :379                      
+ All causes, by age (years), 45–64, flag All causes, by age (years), 25–44
+ Length:6864                             Min.   :  1.00                   
+ Class :character                        1st Qu.:  2.00                   
+ Mode  :character                        Median :  5.00                   
+                                         Mean   : 18.21                   
+                                         3rd Qu.: 11.00                   
+                                         Max.   :858.00                   
+                                         NA's   :976                      
+ All causes, by age (years), 25–44, flag All causes, by age (years), 1–24
+ Length:6864                             Min.   :  1.000                 
+ Class :character                        1st Qu.:  1.000                 
+ Mode  :character                        Median :  3.000                 
+                                         Mean   :  8.201                 
+                                         3rd Qu.:  5.000                 
+                                         Max.   :299.000                 
+                                         NA's   :2394                    
+ All causes, by age (years), 1–24, flag All causes, by age (years), LT 1
+ Length:6864                            Min.   :  1.000                 
+ Class :character                       1st Qu.:  1.000                 
+ Mode  :character                       Median :  2.000                 
+                                        Mean   :  7.233                 
+                                        3rd Qu.:  5.000                 
+                                        Max.   :232.000                 
+                                        NA's   :2747                    
+ All causes, by age (years), LT 1, flag   P&amp;I† Total      P&amp;I† Total, flag  
+ Length:6864                            Min.   :   1.00   Length:6864       
+ Class :character                       1st Qu.:   3.00   Class :character  
+ Mode  :character                       Median :   6.00   Mode  :character  
+                                        Mean   :  19.83                     
+                                        3rd Qu.:  12.00                     
+                                        Max.   :1339.00                     
+                                        NA's   :973                         
+  Location 1        Location 2    
+ Length:6864        Mode:logical  
+ Class :character   NA's:6864     
+ Mode  :character                 
+                                  
+                                  
+                                  
+                                  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(deathdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>spc_tbl_ [6,864 × 19] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ Reporting Area                              : chr [1:6864] "Albany, NY" "Allentown, PA" "Buffalo, NY" "Camden, NJ" ...
+ $ MMWR YEAR                                   : num [1:6864] 2015 2015 2015 2015 2015 ...
+ $ MMWR WEEK                                   : num [1:6864] 4 4 4 4 4 4 4 4 4 4 ...
+ $ All causes, by age (years), All Ages**      : num [1:6864] 61 30 100 31 17 ...
+ $ All causes, by age (years), All Ages**, flag: chr [1:6864] NA NA NA NA ...
+ $ All causes, by age (years), ?65             : num [1:6864] 47 22 75 13 12 55 19 866 27 NA ...
+ $ All causes, by age (years), ?65, flag       : chr [1:6864] NA NA NA NA ...
+ $ All causes, by age (years), 45–64           : num [1:6864] 11 4 19 9 2 11 4 188 9 NA ...
+ $ All causes, by age (years), 45–64, flag     : chr [1:6864] NA NA NA NA ...
+ $ All causes, by age (years), 25–44           : num [1:6864] 1 3 4 6 3 2 NA 35 8 NA ...
+ $ All causes, by age (years), 25–44, flag     : chr [1:6864] NA NA NA NA ...
+ $ All causes, by age (years), 1–24            : num [1:6864] 2 1 1 2 NA 1 NA 13 NA NA ...
+ $ All causes, by age (years), 1–24, flag      : chr [1:6864] NA NA NA NA ...
+ $ All causes, by age (years), LT 1            : num [1:6864] NA NA 1 1 NA NA NA 7 2 NA ...
+ $ All causes, by age (years), LT 1, flag      : chr [1:6864] "-" "-" NA NA ...
+ $ P&amp;I† Total                                  : num [1:6864] 4 1 14 2 2 7 2 59 1 NA ...
+ $ P&amp;I† Total, flag                            : chr [1:6864] NA NA NA NA ...
+ $ Location 1                                  : chr [1:6864] "Albany, NY\n(42.651242, -73.755418)" "Allentown, PA\n(40.602753, -75.469759)" "Buffalo, NY\n(39.945422, -78.64671)" "Camden, NJ\n(39.945208, -75.118833)" ...
+ $ Location 2                                  : logi [1:6864] NA NA NA NA NA NA ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   `Reporting Area` = col_character(),
+  ..   `MMWR YEAR` = col_double(),
+  ..   `MMWR WEEK` = col_double(),
+  ..   `All causes, by age (years), All Ages**` = col_double(),
+  ..   `All causes, by age (years), All Ages**, flag` = col_character(),
+  ..   `All causes, by age (years), ?65` = col_double(),
+  ..   `All causes, by age (years), ?65, flag` = col_character(),
+  ..   `All causes, by age (years), 45–64` = col_double(),
+  ..   `All causes, by age (years), 45–64, flag` = col_character(),
+  ..   `All causes, by age (years), 25–44` = col_double(),
+  ..   `All causes, by age (years), 25–44, flag` = col_character(),
+  ..   `All causes, by age (years), 1–24` = col_double(),
+  ..   `All causes, by age (years), 1–24, flag` = col_character(),
+  ..   `All causes, by age (years), LT 1` = col_double(),
+  ..   `All causes, by age (years), LT 1, flag` = col_character(),
+  ..   `P&amp;I† Total` = col_double(),
+  ..   `P&amp;I† Total, flag` = col_character(),
+  ..   `Location 1` = col_character(),
+  ..   `Location 2` = col_logical()
+  .. )
+ - attr(*, "problems")=&lt;externalptr&gt; </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(deathdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The `guide` argument in `scale_*()` cannot be `FALSE`. This was deprecated in
+ggplot2 3.3.4.
+ℹ Please use "none" instead.
+ℹ The deprecated feature was likely used in the naniar package.
+  Please report the issue at &lt;https://github.com/njtierney/naniar/issues&gt;.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="dataanalysis_exercise_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Looking at the <code>summary()</code> and <code>str()</code> output, the dataset has a row for each city (identified in the Reporting Area column) for each MMWR week of the year. The columns marked as flag only contains NAs and marked as character variables. The other columns contain the number of deaths for each age group. There are a total of 6864 observations. Notice also the dashes (representing no reported cases) does not accurately represent the report since the minimum for the age group columns is 1. Exploring further, the <code>gg_miss_var()</code> from the <code>naniar</code> package reports the number of missing values by variable, which the flagged and location columns having the highest number of missing data points.</p>
+<p>Note: in the original CDC database, the summary of the dataset indicated there would be ages groups of 65-75 years and 85+ years. I do not see those age groups on the actual data available.</p>
+</section>
+<section id="cleaning-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="cleaning-the-data">Cleaning the data</h2>
+<p>Let’s start cleaning the data by changing the column names to something easier to work with. Since I am only interested in the age group columns, I will only be renaming these.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#rename columns for easier cleaning and assign to RNdeathdata</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>RNdeathdata <span class="ot">&lt;-</span> deathdata <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">AllAges =</span> <span class="st">`</span><span class="at">All causes, by age (years), All Ages**</span><span class="st">`</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">AllAgesFlag =</span> <span class="st">`</span><span class="at">All causes, by age (years), All Ages**, flag</span><span class="st">`</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">AgesOver65 =</span> <span class="st">`</span><span class="at">All causes, by age (years), ?65</span><span class="st">`</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">AgesOver65Flag =</span> <span class="st">`</span><span class="at">All causes, by age (years), ?65, flag</span><span class="st">`</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">Ages45to64 =</span> <span class="st">`</span><span class="at">All causes, by age (years), 45–64</span><span class="st">`</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">Ages45to64Flag =</span> <span class="st">`</span><span class="at">All causes, by age (years), 45–64, flag</span><span class="st">`</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">Ages25to44 =</span> <span class="st">`</span><span class="at">All causes, by age (years), 25–44</span><span class="st">`</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">Ages25to44Flag =</span> <span class="st">`</span><span class="at">All causes, by age (years), 25–44, flag</span><span class="st">`</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">Ages1to24 =</span> <span class="st">`</span><span class="at">All causes, by age (years), 1–24</span><span class="st">`</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">Ages1to24Flag =</span> <span class="st">`</span><span class="at">All causes, by age (years), 1–24, flag</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, I want to find which columns contain the dashes (for zero cases) and “U” for unreported data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#finding dashes and "U" in data set by column</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str_detect</span>(RNdeathdata, <span class="st">"-"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in stri_detect_regex(string, pattern, negate = negate, opts_regex =
+opts(pattern)): argument is not an atomic vector; coercing</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] FALSE FALSE FALSE FALSE  TRUE FALSE  TRUE FALSE  TRUE FALSE  TRUE FALSE
+[13]  TRUE FALSE  TRUE FALSE  TRUE  TRUE FALSE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_detect</span>(RNdeathdata, <span class="st">"U"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in stri_detect_regex(string, pattern, negate = negate, opts_regex =
+opts(pattern)): argument is not an atomic vector; coercing</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  TRUE FALSE FALSE FALSE  TRUE FALSE  TRUE FALSE  TRUE FALSE  TRUE FALSE
+[13]  TRUE FALSE  TRUE FALSE  TRUE  TRUE FALSE</code></pre>
+</div>
+</div>
+<p>Using the <code>str_detect()</code> function, we can see the same columns have dashes and “u” (except for the Reporting Area column which contains “u” as part of the city names). Looking back at the output from str() in the above step, the flagged columns as well as Location 1 column have the dashes and unreported data. Since I will be removing the flagged columns but want to preserve the values that are meant to be zero for that age group in that city for that week, I will translate the dashes into 0s for the corresponding columns.</p>
+<p>Let’s go ahead and remove the rows with unreported data and change the dashes into 0s for the corresponding columns.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#remove observations with unreported data and assign to data2</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>data2<span class="ot">&lt;-</span> RNdeathdata <span class="sc">%&gt;%</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="st">`</span><span class="at">AgesOver65Flag</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"U"</span> <span class="sc">|</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="st">`</span><span class="at">All causes, by age (years), LT 1, flag</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"U"</span> <span class="sc">|</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="st">`</span><span class="at">Ages1to24Flag</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"U"</span> <span class="sc">|</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="st">`</span><span class="at">Ages45to64Flag</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"U"</span> <span class="sc">|</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="st">`</span><span class="at">Ages25to44Flag</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"U"</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#translate dashes from flagged columns into 0 for the corresponding age group columns and assign to data3</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>data3 <span class="ot">&lt;-</span> data2 <span class="sc">%&gt;%</span> </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">AgesOver65</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">case_when</span>(<span class="st">`</span><span class="at">AgesOver65Flag</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"-"</span> <span class="sc">~</span> <span class="dv">0</span>, <span class="cn">TRUE</span> <span class="sc">~</span> AgesOver65),</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Ages45to64</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">case_when</span>(<span class="st">`</span><span class="at">Ages45to64Flag</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"-"</span> <span class="sc">~</span> <span class="dv">0</span>, <span class="cn">TRUE</span> <span class="sc">~</span> Ages45to64),</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Ages25to44</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">case_when</span>(<span class="st">`</span><span class="at">Ages25to44Flag</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"-"</span> <span class="sc">~</span> <span class="dv">0</span>, <span class="cn">TRUE</span> <span class="sc">~</span> Ages25to44),</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Ages1to24</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">case_when</span>(<span class="st">`</span><span class="at">Ages1to24Flag</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"-"</span> <span class="sc">~</span> <span class="dv">0</span>, <span class="cn">TRUE</span> <span class="sc">~</span> Ages1to24),</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">AllAges</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">case_when</span>(<span class="st">`</span><span class="at">AllAgesFlag</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"-"</span> <span class="sc">~</span> <span class="dv">0</span>, <span class="cn">TRUE</span> <span class="sc">~</span> AllAges))</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co">#check for missing data</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(data3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="dataanalysis_exercise_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>As seen with the missing variable graph, we have full data sets for the non-flagged columns which means the observations in the flagged columns with dashes had NAs in the non-flagged age groups. Now we can remove those columns and focus only on the age groups. I also can remove the Year column since the data is from 2015.</p>
+</section>
+<section id="select-final-columns-of-data" class="level2">
+<h2 class="anchored" data-anchor-id="select-final-columns-of-data">Select final columns of data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#select age group columns, MMWR week, and Reporting Area and assign to cleandeathdata</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>cleandeathdata <span class="ot">&lt;-</span> data3 <span class="sc">%&gt;%</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">!</span><span class="fu">contains</span>(<span class="st">"Flag"</span>) <span class="sc">&amp;</span> </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>           <span class="sc">-</span><span class="fu">c</span>(<span class="st">"Location 1"</span>, <span class="st">"Location 2"</span>, <span class="st">"MMWR YEAR"</span>, </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>              <span class="st">"All causes, by age (years), LT 1"</span>, <span class="st">"P&amp;I† Total"</span>))</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(cleandeathdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Reporting Area       MMWR WEEK       AllAges         AgesOver65    
+ Length:3322        Min.   : 1.0   Min.   :  0.00   Min.   :  0.00  
+ Class :character   1st Qu.:13.0   1st Qu.: 23.00   1st Qu.: 16.00  
+ Mode  :character   Median :26.0   Median : 41.00   Median : 30.00  
+                    Mean   :26.4   Mean   : 50.65   Mean   : 35.93  
+                    3rd Qu.:40.0   3rd Qu.: 68.00   3rd Qu.: 48.00  
+                    Max.   :52.0   Max.   :321.00   Max.   :236.00  
+   Ages45to64      Ages25to44       Ages1to24      
+ Min.   : 0.00   Min.   : 0.000   Min.   : 0.0000  
+ 1st Qu.: 4.00   1st Qu.: 1.000   1st Qu.: 0.0000  
+ Median : 9.00   Median : 2.000   Median : 0.0000  
+ Mean   :10.92   Mean   : 2.668   Mean   : 0.6409  
+ 3rd Qu.:15.00   3rd Qu.: 4.000   3rd Qu.: 1.0000  
+ Max.   :79.00   Max.   :27.000   Max.   :18.0000  </code></pre>
+</div>
+</div>
+<p>The final dataframe <code>cleandeathdata</code> contains information for 122 cities that reported weekly number of deaths due to pneumonia or influenza by age group in 2015.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#save cleaned data in RDS file in cleandata folder</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(cleandeathdata, <span class="at">file =</span> <span class="st">"dataanalysis_exercise/cleandata/cleandeathdata.rds"</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#save summary table as RDS file in results folder</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>summarytable <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="fu">do.call</span>(cbind, <span class="fu">lapply</span>(cleandeathdata, summary)))</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summarytable)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        Reporting.Area        MMWR.WEEK          AllAges       AgesOver65
+Min.              3322                1                0                0
+1st Qu.      character               13               23               16
+Median       character               26               41               30
+Mean              3322 26.4021673690548 50.6493076459964 35.9292594822396
+3rd Qu.      character               40               68               48
+Max.         character               52              321              236
+             Ages45to64      Ages25to44         Ages1to24
+Min.                  0               0                 0
+1st Qu.               4               1                 0
+Median                9               2                 0
+Mean    10.917820590006 2.6676700782661 0.640878988561108
+3rd Qu.              15               4                 1
+Max.                 79              27                18</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(summarytable, <span class="at">file =</span> <span class="st">"dataanalysis_exercise/results/summarytable.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

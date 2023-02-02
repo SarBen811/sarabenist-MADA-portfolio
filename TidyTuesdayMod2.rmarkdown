@@ -8,7 +8,7 @@ output: html_document
 
 execute:
 
-freeze: auto \# re-render only when source changes
+freeze: auto 
 
 ------------------------------------------------------------------------
 
