@@ -120,3 +120,62 @@ print(summarytable)
 
 saveRDS(summarytable, file = "dataanalysis_exercise/results/summarytable.rds")
 ```
+
+# This section added by Leah Lariscy 
+
+## Loading the data
+Here, I will read in the above RDS file 
+```{r}
+death_LML <- read_rds("dataanalysis_exercise/cleandata/cleandeathdata.rds")
+```
+
+Next, I will take a look at the data and check that there are no NAs again
+```{r}
+tibble(death_LML)
+gg_miss_var(death_LML)
+```
+
+
+## Further data cleaning
+After looking at the data, I want to pull apart `Reporting Area` into `State` and `City` so I can then compare data across states. I am also removing the variable `AllAges` so that I can use `pivot_longer` and this column will cause issues when I am trying to plot. Also, I will easily be able to calculate this again, if needed, by grouping by `city` and `state` and using `mutate` to report the sum.
+```{r}
+#Use the separate function
+clean_death_LML <- death_LML %>% separate(col = `Reporting Area`, into = c("city","state"), sep = ", ") %>% select(!AllAges)
+```
+
+I need to use `pivot_longer` because I'd like to create a new variable `age_group` that all the age groups can go underneath. This way, it will be much easier to create plots from.
+```{r}
+clean_death_long_LML <- clean_death_LML %>% pivot_longer(cols = c(AgesOver65,Ages45to64,Ages25to44,Ages1to24), names_to = "age_group") %>% rename(deaths = value)
+tibble(clean_death_long_LML)
+```
+
+## Exploratory analysis
+Here, I will plot `age_group` on the x-axis and `deaths` on the y-axis to compare total deaths per age group.
+```{r}
+clean_death_long_LML %>% ggplot(mapping = aes(x = age_group, y = deaths, fill = age_group)) +
+  geom_col() +
+  labs(title = "Total influenza/pneumonia related deaths in the US per age group in 2015",
+       x = "Age Group",
+       y = "Deaths",
+       fill = "Age Group") 
+
+```
+From this plot, we see that number of deaths increases as age groups increase. 
+
+
+Here, I am grouping by `state` and `age_group` to look at deaths per age group across each state.
+```{r}
+state_deaths <- clean_death_long_LML %>% group_by(state, age_group) %>% mutate(state_deaths_per_age = sum(deaths)) %>% ungroup()
+```
+
+Here, I will plot `state` on the x-axis and `state_deaths_per_age` on the y-axis, colored by `age_group`. 
+```{r}
+state_deaths %>% ggplot(aes(state, state_deaths_per_age, fill = age_group)) +
+  geom_col() +
+  labs(title = "Total influenza/pneumonia related deaths in the US by state and age group, 2015",
+       x = "State",
+       y = "Deaths per state",
+       fill = "Age Group") +
+   theme(axis.text.x.bottom = element_text(angle = 90))
+```
+This plot shows certain states with much higher flu/pneumonia related deaths (New York, Massachusetts, California). This could be due to many factors, population size likely being one of them. Each state seems to follow a similar trend in death proportions per age group.
