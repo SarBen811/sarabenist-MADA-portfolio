@@ -498,8 +498,105 @@ Max.                 79              27                18</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(summarytable, <span class="at">file =</span> <span class="st">"dataanalysis_exercise/results/summarytable.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="this-section-added-by-leah-lariscy" class="level1">
+<h1>This section added by Leah Lariscy</h1>
+<section id="loading-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="loading-the-data">Loading the data</h2>
+<p>Here, I will read in the above RDS file</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>death_LML <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"dataanalysis_exercise/cleandata/cleandeathdata.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, I will take a look at the data and check that there are no NAs again</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(death_LML)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3,322 × 7
+   `Reporting Area` `MMWR WEEK` AllAges AgesOver65 Ages45to64 Ages25to44 Ages1…¹
+   &lt;chr&gt;                  &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+ 1 Albany, NY                 4      61         47         11          1       2
+ 2 Allentown, PA              4      30         22          4          3       1
+ 3 Elizabeth, NJ              4      17         12          2          3       0
+ 4 Erie, PA                   4      69         55         11          2       1
+ 5 Jersey City, NJ            4      23         19          4          0       0
+ 6 Newark, NJ                 4      46         27          9          8       0
+ 7 Pittsburgh, PA§            4      48         37         10          1       0
+ 8 Reading, PA                4      27         20          4          2       1
+ 9 Schenectady, NY            4      45         32         12          1       0
+10 Scranton, PA               4      34         25          6          2       0
+# … with 3,312 more rows, and abbreviated variable name ¹​Ages1to24</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(death_LML)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="dataanalysis_exercise_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="further-data-cleaning" class="level2">
+<h2 class="anchored" data-anchor-id="further-data-cleaning">Further data cleaning</h2>
+<p>After looking at the data, I want to pull apart <code>Reporting Area</code> into <code>State</code> and <code>City</code> so I can then compare data across states. I am also removing the variable <code>AllAges</code> so that I can use <code>pivot_longer</code> and this column will cause issues when I am trying to plot. Also, I will easily be able to calculate this again, if needed, by grouping by <code>city</code> and <code>state</code> and using <code>mutate</code> to report the sum.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Use the separate function</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>clean_death_LML <span class="ot">&lt;-</span> death_LML <span class="sc">%&gt;%</span> <span class="fu">separate</span>(<span class="at">col =</span> <span class="st">`</span><span class="at">Reporting Area</span><span class="st">`</span>, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"city"</span>,<span class="st">"state"</span>), <span class="at">sep =</span> <span class="st">", "</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">!</span>AllAges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>I need to use <code>pivot_longer</code> because I’d like to create a new variable <code>age_group</code> that all the age groups can go underneath. This way, it will be much easier to create plots from.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>clean_death_long_LML <span class="ot">&lt;-</span> clean_death_LML <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(AgesOver65,Ages45to64,Ages25to44,Ages1to24), <span class="at">names_to =</span> <span class="st">"age_group"</span>) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">deaths =</span> value)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(clean_death_long_LML)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 13,288 × 5
+   city      state `MMWR WEEK` age_group  deaths
+   &lt;chr&gt;     &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;
+ 1 Albany    NY              4 AgesOver65     47
+ 2 Albany    NY              4 Ages45to64     11
+ 3 Albany    NY              4 Ages25to44      1
+ 4 Albany    NY              4 Ages1to24       2
+ 5 Allentown PA              4 AgesOver65     22
+ 6 Allentown PA              4 Ages45to64      4
+ 7 Allentown PA              4 Ages25to44      3
+ 8 Allentown PA              4 Ages1to24       1
+ 9 Elizabeth NJ              4 AgesOver65     12
+10 Elizabeth NJ              4 Ages45to64      2
+# … with 13,278 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="exploratory-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-analysis">Exploratory analysis</h2>
+<p>Here, I will plot <code>age_group</code> on the x-axis and <code>deaths</code> on the y-axis to compare total deaths per age group.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>clean_death_long_LML <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> age_group, <span class="at">y =</span> deaths, <span class="at">fill =</span> age_group)) <span class="sc">+</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Total influenza/pneumonia related deaths in the US per age group in 2015"</span>,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Age Group"</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Deaths"</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Age Group"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="dataanalysis_exercise_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>From this plot, we see that number of deaths increases as age groups increase.</p>
+<p>Here, I am grouping by <code>state</code> and <code>age_group</code> to look at deaths per age group across each state.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>state_deaths <span class="ot">&lt;-</span> clean_death_long_LML <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(state, age_group) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">state_deaths_per_age =</span> <span class="fu">sum</span>(deaths)) <span class="sc">%&gt;%</span> <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here, I will plot <code>state</code> on the x-axis and <code>state_deaths_per_age</code> on the y-axis, colored by <code>age_group</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>state_deaths <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(state, state_deaths_per_age, <span class="at">fill =</span> age_group)) <span class="sc">+</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Total influenza/pneumonia related deaths in the US by state and age group, 2015"</span>,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"State"</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Deaths per state"</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Age Group"</span>) <span class="sc">+</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">axis.text.x.bottom =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="dataanalysis_exercise_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>This plot shows certain states with much higher flu/pneumonia related deaths (New York, Massachusetts, California). This could be due to many factors, population size likely being one of them. Each state seems to follow a similar trend in death proportions per age group.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

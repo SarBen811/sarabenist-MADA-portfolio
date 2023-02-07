@@ -90,9 +90,9 @@ The new dataframe `plot1data` has a summary of the average number of births on t
 
 ## Plot graph
 
-Using the `plot1data`, we can attempt to recreate the graph using the `ggplot()` and associated functions.
+Using the `plot1data`, we can attempt to recreate the graph using the `ggplot()` and associated functions. The `geom_col()` function will be the basis of the graph, and the `theme()`, `labs()`, `scale_x_discrete()`, `scale_y_continuous()` , and `scale_fill_manual()` functions all adjusted the graph elements to look like the original graph (or at least as close as I can get to it!).
 
-Note: Because I did not remove data for the national holidays that fall on either the 6th or 20th between 1994 to 2014, my graph does not match the article's exactly, but the trends are still present.
+Note: Because I did not remove data for the national holidays that fall on either the 6th or 20th between 1994 to 2014, my graph data may not match the article's exactly, but the trends are still present.
 
 ```{r plot}
 #| output: false
@@ -121,7 +121,8 @@ ggsave("remadegraph.png", width = 5, height= 5)
 
 ![](remadegraph.png)
 
-After adjusting the height and width of the final graph, the remade plot is pretty close to the original graph. The biggest differences that I could not code for is the font and removal of holidays. 
+After adjusting the height and width of the final graph, the remade plot is pretty close to the original graph. The biggest differences that I could not code for is the font and removal of holidays.
 
-## Troubles/Issues 
-When I was trying to recreate the graph, there was a lot of googling to figure out all the theme elements to adjust (particularly with [this website](https://ggplot2-book.org/polishing.html)), but my main issue was trying to get the correct data for percent change needed for the y axis. Google did not have that answer I was looking for since many of the solutions involved something along the line of y = (..count..)/sum(..count..) in ggplot. Eventually, I figured out how to manually code it correctly after determining exactly what was being compared on the graph.
+## Troubles/Issues
+
+When I was trying to recreate the graph, there was a lot of googling to figure out all the theme elements to adjust (particularly with [this website](https://ggplot2-book.org/polishing.html)), but my main issue was trying to get the correct data for percent change needed for the y axis. Google did not have that answer I was looking for since many of the solutions involved something along the line of [y = (..count..)/sum(..count..)](https://statisticsglobe.com/draw-categorical-variable-with-percentage-in-r) in ggplot. Eventually, I figured out how to manually code it correctly after determining exactly what was being compared on the graph. My notes from the Introduction to R class that I took last semester were very helpful for manually coding `plot1data`.
