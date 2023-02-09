@@ -13,13 +13,14 @@ The data I will use is from the FiveThirtyEight article ["Some People Are Too Su
 #| output: false
 library(readr)
 library(tidyverse)
+library(ggthemes)
 ```
 
 ## Data loading
 
 I downloaded the data files and placed them into the data folder as `births1` and `births2`. Using the `read_delim()` function, these data sets will be assigned as `data1` and `data2`.
 
-```{r load data, include=FALSE}
+```{r load data}
 #| output: false
 data1 <- read_delim(file = "data/births1.txt")
 data2 <- read_delim(file = "data/births2.txt")
@@ -45,6 +46,9 @@ The graph uses data from the years 1994-2014, so we need to join the datasets to
 #join both data sets and assign to fulldata
 fulldata <- full_join(data1, data2)
 
+#visual display of 10 random observations in fulldata set
+slice_sample(fulldata, n = 10)
+
 #summary of dataset and check for joining issues
 summary(fulldata)
 str(fulldata)
@@ -57,18 +61,20 @@ The `fulldata` set now contains information for 1994-2014 with 9131 observations
 Now that we have the data for the full range of years, we need to manipulate the data to find the average number of births on the 6th or 20th of the month compared to the average number of of births on the 13th of the month. Since the graph is separated by weekday, we need to first group by weekday.
 
 ```{r make new variables}
-#assign to plot1data: find the average number of births on each weekday 
-  #for the 6th or 20th of the month (new variable: avg620),
-#the average number of births on each weekday 
-  #for the 13th of the month(new variable: avg13),
-#and the percent difference for each weekday(new variable: pctdiff)
+#assign to plot1data and create 3 new variables
 plot1data <- fulldata %>% group_by(day_of_week) %>% 
-  summarise(avg620 = mean(births[date_of_month == 6 | date_of_month == 20]),
-            avg13 = mean(births[date_of_month == 13])) %>%
-  mutate(pctdiff = (avg13-avg620)/avg13 *100)
+  summarise(avg620 = mean(births[date_of_month == 6 | date_of_month == 20]), #average number of births on each weekday for the 6th or 20th of the month
+            avg13 = mean(births[date_of_month == 13])) %>% #the average number of births on each weekday for the 13th of the month
+  mutate(pctdiff = (avg13-avg620)/avg13 *100) #the percent difference for each weekday
 
-#recode days of the week for plot labels, 
-  #factor to keep days ordered for graph
+#check the new data set
+head(plot1data, 7)
+```
+
+I want to also recode the `day_of_week` column into days rather than numbers for the graph labeling. To preserve the weekday order, I will need to change the variable into a factor using `mutate()` and `factor()` functions.
+
+```{r}
+#recode days of the week for plot labels and factor to keep days ordered for graph
 plot1data<- plot1data %>% 
   mutate(day_of_week = case_when(
     day_of_week %in% 1 ~ "MON",
@@ -83,7 +89,8 @@ plot1data<- plot1data %>%
   
 
 #check new dataset
-summary(plot1data)
+head(plot1data, 7)
+
 ```
 
 The new dataframe `plot1data` has a summary of the average number of births on the 6th or 20th and the average number of births on the 13th as well as the percent difference for each weekday. Notice that we needed to use the `summarise()` rather than the `mutate()` function to create the new variables. The `summarise()` function returns one row for a group of observations after a `group_by()` statement while `mutate()` returns the same number of rows as the original dataset.
@@ -97,29 +104,40 @@ Note: Because I did not remove data for the national holidays that fall on eithe
 ```{r plot}
 #| output: false
 
-#plot the data and adjust graph appearance to article
+#set up standard plot
 ggplot(plot1data)+
   geom_col(aes(x = day_of_week, y = pctdiff, fill = day_of_week), width = 0.75)+
-  theme(panel.grid = element_line(colour = "#E1E1E1"),
-        plot.background = element_rect(fill = "#F1F1F1" ),
-        panel.background = element_rect(fill = "#F1F1F1"),
-        axis.line.x = element_line(color = "black"),
-        plot.title = element_text(face = "bold"),
-        plot.subtitle = element_text(size = 10),
-        legend.position = "none")+
+  theme_fivethirtyeight()+ #theme from article database
+
+#add labeling
   labs(title = "The Friday the 13th effect",
        subtitle = "Difference in the share of U.S. births on the 13th of each month\nfrom the average of births on the 6th and the 20th, 1994-2014",
-       y = "ppt", x = NULL)+
-  scale_x_discrete(position = "top")+
-  scale_y_continuous(breaks = c(0,-1,-2,-3,-4,-5,-6))+
+       y = "ppt", x = NULL)+ # add title, subtitle, y axis title and remove x axis
+
+#add axis elements and bar colors
+  scale_x_discrete(position = "top")+ #move x axis to top of graph,
+  scale_y_continuous(breaks = c(0,-1,-2,-3,-4,-5,-6), labels = c("0 ppt", "-1","-2","-3","-4","-5","-6"))+ #define y axis tick marks and labels
   scale_fill_manual(values =
         c("#EBB7EC", "#EBB7EC", "#EBB7EC", "#EBB7EC",
-                   "#E22EDD", "#EBB7EC", "#EBB7EC"))
+                   "#E22EDD", "#EBB7EC", "#EBB7EC"))+ #bar colors
+                     
+#Adjust theme to match graph aesthetics
+  theme(panel.grid = element_line(colour = "#E0E0E0"), #light grey for grid lines
+        panel.background = element_rect(fill = "#F0F0F0"), #light grey for panel background
+        plot.background = element_rect(fill = "#F0F0F0" ), #light grey for graph background
+        axis.line.x = element_line(color = "#808080"), # black for x axis
+        axis.text = element_text(color = "#b5b5b5"), #grey color of axis labels
+        plot.title = element_text(face = "bold"), # bold title
+        plot.subtitle = element_text(size = 10), #change size of subtitle
+        legend.position = "none", # remove legend
+        axis.title.y = NULL) #remove y axis label
 
-ggsave("remadegraph.png", width = 5, height= 5)
+
+
+ggsave("remadegraph.png", width = 5, height = 5)
 ```
 
-![](remadegraph.png)
+![](remadegraph.png){width="417"}
 
 After adjusting the height and width of the final graph, the remade plot is pretty close to the original graph. The biggest differences that I could not code for is the font and removal of holidays.
 
