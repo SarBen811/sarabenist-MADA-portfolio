@@ -5,4 +5,166 @@ output:
     toc: FALSE
 ---
 
-Placeholder file for the future Tidy Tuesday exercise.
+For this exercise, I will be using data cleaning and exploratory analysis on this week's TidyTuesday data set. The data is on [Hollywood Age Gaps](https://github.com/rfordatascience/tidytuesday/tree/master/data/2023/2023-02-14) showing the age difference between love interests on various films. The data set includes variables for Movie Title, Release Year, Director, and various character-related information.
+
+## Possible questions to explore
+1. Does the average age difference change over different release years?
+2. Does age difference differ between mixed-gender and same-gender couples?
+3. What directors have the highest average age difference?
+
+
+To begin, let's load the packages and the data set. 
+
+## Load packages
+
+```{r}
+#| output: false
+library(tidytuesdayR)
+library(tidyverse)
+library(dplyr)
+library(naniar)
+library(forcats)
+```
+
+## Load data from TidyTuesday
+This part of the code used taken from the `readme` file on the GitHub repository. 
+
+```{r}
+#| output: false
+tuesdata <- tidytuesdayR::tt_load('2023-02-14')
+tuesdata <- tidytuesdayR::tt_load(2023, week = 7)
+# load data and assign to age_gaps
+age_gaps <- tuesdata$age_gaps
+```
+
+## Overview of data
+First, let's see an overview of the data. 
+```{r}
+glimpse(age_gaps)
+summary(age_gaps)
+```
+There are 1155 observations with 13 variables. The earliest movie is from 1935 and the most recent from 2022. The maximum age difference is 52 years, and the other variables can use age and birthday of the actors to calculate age difference. Next, we can check for missing data points.
+
+```{r}
+#check for missing points
+gg_miss_var(age_gaps)
+
+#check for NAs
+any(is_na(age_gaps))
+```
+It looks like this is a complete dataset! Next we can explore the data by each variable. 
+
+## Exploring the data
+Since `age_difference` is our outcome of interest, we can look at the distribution of age differences. 
+```{r}
+#histogram of age differences
+hist(age_gaps$age_difference,
+     labels = TRUE,
+     xlab = "Difference in age by year",
+     main = "Histogram of Age Differences",
+     ylim = c(0,450),
+     xlim = c(0,60))
+```
+A majority of the age differences are below 20 years with most being below 5 years. The highest age difference is approximately 55 years.
+
+We can also look at the distribution of observations based on release year. 
+```{r}
+#table function for count of observations for each year
+table(age_gaps$release_year)
+```
+Most of the data points are from ~1980 to 2019. 
+
+### Question 1
+Next, we can look age difference based on release year. 
+```{r}
+ggplot(age_gaps, aes(release_year, age_difference))+
+  geom_point()+
+  labs(x = "Release Year",
+       y = "Age Difference",
+       title = "Age difference by release year")
+```
+No clear relationship between release year and age difference but that could be due to a majority of the data points being from the last 50 years. We can also look at the average age difference per year. We can also look at the gender of the older character since character 1 is listed as the older character in the data set.
+
+```{r}
+ggplot(age_gaps, aes(release_year, age_difference, color = character_1_gender))+
+  geom_point()+
+  labs(x = "Release Year",
+       y = "Age Difference",
+       title = "Age difference by release year",
+       subtitle = "based on older character gender")+
+  theme_minimal()+
+  scale_color_brewer(palette = "Paired")
+```
+When the gender of the older character is added, there appears to be more older male characters compared to older female characters, and when females are older, the age difference tends to be below 15 years. There is an easily identifiable outlier around 1973 that has an age difference over 50. 
+
+We can also look at the mean age difference by release year. 
+```{r}
+age_gaps %>% 
+  group_by(release_year) %>% 
+  summarise(mean_age_diff = mean(age_difference)) %>% #average age difference for each release year
+  ggplot(aes(release_year, mean_age_diff))+
+  geom_line(color = "darkslateblue")+
+  labs(title = "Average age difference by release year",
+       x = "Release Year",
+       y = "Average Age Difference")
+```
+There still doesn't seem to be a clear relationship between release year and age difference, but there does seem to be a stabilization at approximately 10 years by 2000. 
+
+### Question 2
+I would also like to explore if there is a a difference between mixed-gender and same-gender couples. First, I'll need to create a new variable called `relationship` to denote the groups.
+```{r}
+#create relationship variable and reassign to age_gaps
+age_gaps <- age_gaps %>% 
+  mutate(relationship = case_when(character_1_gender == "man" & character_2_gender == "woman" ~ "man_woman",
+                                  character_1_gender == "woman" & character_2_gender == "man" ~ "man_woman", #needed to account for either gender as character 1
+                                  character_1_gender == "man" & character_2_gender == "man" ~ "man_man",
+                                  character_1_gender == "woman" & character_2_gender == "woman" ~ "woman_woman"))
+
+glimpse(age_gaps)
+```
+Now we can group by relationship and plot age difference.
+
+```{r}
+age_gaps %>% 
+  ggplot()+
+  geom_boxplot(aes(relationship, age_difference))+
+  labs(x = "Relationship Type",
+       y = "Age Difference",
+       title = "Age difference by relationship type")
+```
+It looks like the man_woman and woman_woman tend to have a similar median age difference with man_man having a higher median age difference. The man_woman category also appears to be responsible for most of the high age differences as shown with the outliers. 
+
+### Question 3
+
+Finally, let's look into the third exploratory question about directors and age differences.
+```{r}
+#count the number of directors in the dataset
+length(unique(age_gaps$director))
+```
+There are 510 directors in the dataset. Let's graph age difference by director.
+```{r}
+ggplot(age_gaps, aes(x = director, y = age_difference))+
+  geom_boxplot()+
+  labs()+
+  coord_flip()
+```
+Alright, so we obviously have too many data points to really see any trends. Let's arrange the data be descending age difference and only look at the top 20 directors
+
+```{r}
+age_gaps2 <- age_gaps %>% 
+  group_by(director) %>% #group by director
+  summarise(mean_age_diff = mean(age_difference)) %>% #create average age difference for each director
+  arrange(desc(mean_age_diff)) %>% #order by descending age difference
+  slice(1:20) #use only the top 20 rows
+
+ggplot(age_gaps2, aes(x = fct_reorder(director, mean_age_diff), y = mean_age_diff))+ #needed to use fct_reorder to display ascending age difference rather than alphabetical 
+  geom_point(color = "blue")+
+  labs(y = "Average Age Difference", 
+       x = "Director",
+       title = "Directors with highest average age difference")+
+  coord_flip()+ #flipped axes so director names were easier to read
+  scale_y_reverse() #flipped axis to display in descending order
+
+```
+Hal Ashby have the highest average age difference between characters by far, followed by Katt Shea, Jon Amiel, and Irving Pichel which all had age differences over 35 years. 
+
