@@ -103,32 +103,52 @@ Let's move on to the categorical outcome variable of interest.
 ggplot(flu, aes(Nausea, fill = Nausea))+
   geom_bar()
 ```
+We can see about twice as many respondents reported no nausea. 
+
 ### Nausea and weakness
+
+Considering nausea by level of weakness
 ```{r}
 #plot nausea by weakness
 ggplot(flu, aes(Nausea, fill= Weakness))+
-  geom_bar(position = "dodge")
+  geom_bar(position = "dodge") # use position dodge to have bars side-by-side
 ```
+Of those reporting nausea, mild weakness was the most common group. However, comparing the same level of weakness across the level of nausea shows that severe weakness had the highest proportion of nausea reported. 
 
+### Nausea and cough intensity
+
+Considering nausea and cough intensity:
 ```{r}
 #plot nausea by cough intensity
-ggplot(flu, aes(Nausea, CoughIntensity, fill= CoughIntensity))+
-  geom_col(position = "dodge")
+ggplot(flu, aes(Nausea, fill= CoughIntensity))+
+  geom_bar()+
+  facet_wrap(.~CoughIntensity) #to compare levels of cough intensity
 ```
+Considering respondents who reported nausea, the moderate weakness group reported nausea most often. Comparing within weakness levels, there appears to be a consistent 2:1 ratio of reporting no nausea to nausea present. 
 
+### Nausea and myalgia
+
+Considering nausea and myalgia
 ```{r}
 #plot nausea by myalgia
-ggplot(flu, aes(Nausea, Myalgia, fill= Myalgia))+
-  geom_col()+
-  scale_y_discrete(labels = NULL)
+ggplot(flu, aes(Nausea, fill= Myalgia))+
+  geom_bar()+
+  facet_wrap(.~Myalgia)
 ```
+The group of interest here would be the severe myalgia group since there appears to be an even split of respondents reporting nausea. The other categories follow a similar trend as other leveled variables. 
 
+### Nausea and runny nose
+
+Considering nausea and runny nose (didactic variable):
 ```{r}
 #plot nausea by runny nose
-ggplot(flu, aes(Nausea, RunnyNose, fill= RunnyNose))+
-  geom_col()+
-  scale_y_discrete(labels = NULL)
+ggplot(flu, aes(Nausea, fill= RunnyNose))+
+  geom_bar()+
+  facet_wrap(.~RunnyNose)
 ```
+Approximately half of the respondents in each group of runny nose (present or absent) reported nausea.
+
+Now that we have explored the data, we can start model fitting. 
 
 
 

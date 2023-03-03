@@ -3,82 +3,104 @@ title: "Fitting"
 output: html_document
 ---
 
+This script will use the flu analysis data to create and fit models for the two main outcomes (body temperature and nausea) against one predictor (runny nose) and a full model with all symptoms. 
 ## Load packages
 
 ```{r}
-# | output: false
+#| output: false
 library(tidymodels)
 library(tidyverse)
 library(performance)
+library(here)
 ```
 
 
 ## Load data
 
+Load the cleaned data from the `data` folder. Reassign as `flu`.
 ```{r}
+#load data
 filelocation <- here("fluanalysis", "data", "cleandata.rds")
 load(filelocation)
-
+#reassign as flu
 flu <- cleandata
 ```
 
 ## Fit linear model: RunnyNose
+
+First, we will create the univariate linear model of runny nose predicting body temperature
 ```{r}
-lm_mod <- linear_reg()
+lm_mod <- linear_reg() #set linear regression
 
 RNlm_fit <- lm_mod %>% 
-  fit(BodyTemp ~ RunnyNose, data = flu)
+  fit(BodyTemp ~ RunnyNose, data = flu) # create fitted linear model
 
-tidy(RNlm_fit)
+tidy(RNlm_fit) #produce summary of fitted model
 ```
+The fitted model has produced a linear equation of BodyTemp = -0.2926(RunnyNoseYes) + 99.14. This would indicate that having a runny nose actually predicts a lower body temperature. 
+
+### Predicting from model
+
+Next, we can try predicting from the linear model. This code follows the "Getting Started" code from the `tidymodels` website. We will use median body temperature as our predicted outcome based on runny nose as the predictor.
 ```{r}
 new_points <- flu %>% 
-  expand.grid(BodyTemp = 98.50,
-              RunnyNose = c( "Yes", "No"))
-new_points
-```
-```{r}
-median_predict <- predict(RNlm_fit, new_data = new_points)
+  expand.grid(BodyTemp = 98.50, #median body temperature found during exploration portion
+              RunnyNose = c( "Yes", "No")) #create expanded dataframe
 
-tidy(median_predict)
+median_predict <- predict(RNlm_fit, new_data = new_points) #predicts output values from the expanded dataframe
+
+tidy(median_predict) #summary table of prediction
 
 conf_int_pred <- predict(RNlm_fit,
                          new_data = new_points,
-                         type = "conf_int")
+                         type = "conf_int") #confidence intervals for prediction
 
 plot_data <- new_points %>% 
   bind_cols(median_predict) %>% 
-  bind_cols(conf_int_pred)
+  bind_cols(conf_int_pred) # create new data set with prediction and confidence intervals
 ```
+To view the output easier, we will plot the predicted points using `ggplot`
 ```{r}
 ggplot(plot_data, aes(RunnyNose))+
-  geom_point(aes(y = .pred))+
+  geom_point(aes(y = .pred))+ #predictions on the y axis
   geom_errorbar(aes(ymin = .pred_lower,
-                    ymax = .pred_upper),
+                    ymax = .pred_upper), #produces error bars
                 width = 0.5) +
   labs(y = "Body Temperature")
 ```
+We can see the predicted median body temperature based on having a runny nose is 98.85 degrees and 99.15 if you don't have a runny nose. Interesting!
+
 ## Fit linear model: All symptoms
+
+Next, we will create a fitted linear model using all symptoms as predictors.
 ```{r}
 lm_mod <- linear_reg()
 
 ASlm_fit <- lm_mod %>% 
-  fit(BodyTemp ~ ., data = flu)
-tidy(ASlm_fit)
+  fit(BodyTemp ~ ., data = flu) #use all symptoms (including nausea) as predictors
+tidy(ASlm_fit) #summary of fit
 ```
+The symptoms with positive estimates predict higher body temperature and the negative estimates predict lower body temperature. No one symptom appears to be a strong predictor, and the some variables produced an NA. 
 
+Another way to look at the model without making predictions is using the `glance` function.
 ```{r}
 glance(ASlm_fit)
 ```
+The output shows various estimates of how well the model fits the data. 
 
 ## Compare linear models
+
+To compare the models, we can use the `compare_performance()` function from the `performance` package.
 ```{r}
 compare_performance(RNlm_fit,ASlm_fit)
 ```
+The AIC and R2 are both estimates of how well the models fit the data by determining how much variation in the data is explained by the model. Considering the R2, the all symptom model is a better fit than the runny nose model because the R2 is higher. In addition, a better fitted model will have a lower AIC, which also supports the all symptom model as a better fit. 
 
 ## Fit logistic model: RunnyNose
+
+Now we will consider nausea as our outcome of interest with runny nose as the predictor. 
 ```{r}
-log_mod <- logistic_reg() %>% set_engine("glm")
+log_mod <- logistic_reg() %>% set_engine("glm") #sets logistic regression
 
 RNlog_fit <- log_mod %>% 
   fit(Nausea ~ RunnyNose,
@@ -86,8 +108,11 @@ RNlog_fit <- log_mod %>%
 
 tidy(RNlog_fit)
 ```
+The fitted model has produced a logistic equation of prob(Nausea) = 0.0502(RunnyNoseYes) -0.6578. This would indicate that having a runny nose increases the probability of having nausea. 
 
 ## Fit logistic model: All symptoms
+
+Fitting the full model with all symptoms predicting nausea:
 ```{r}
 log_mod <- logistic_reg() %>% set_engine("glm")
 
@@ -97,12 +122,14 @@ ASlog_fit <- log_mod %>%
 
 tidy(ASlog_fit)
 ```
+Similar to the continuous outcome, the logistic regression estimates are positive if they increase the probability of having nausea and negative if they decrease the probability of having nausea.The same variables produced an NA in the model fitting.
 
 ## Compare logistic models
 
+We can once again compare the models using the `compare_performance` function. 
 ```{r}
 compare_performance(RNlog_fit,ASlog_fit)
 ```
-
+Following the same reasoning with the R2 and AIC that we used with the linear models, the all symptom model is a better fit of the data and explains more of the variation than the univariate model alone. 
 
 
