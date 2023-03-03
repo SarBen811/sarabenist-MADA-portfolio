@@ -1,0 +1,61 @@
+---
+title: "Wrangling"
+output: html_document
+---
+This code script uses the data from this paper: McKay, Brian et al. (2020), Virulence-mediated infectiousness and activity trade-offs and their impact on transmission potential of patients infected with influenza, Dryad, Dataset, https://doi.org/10.5061/dryad.51c59zw4v. The raw data has been placed in the `data` file of this repository.
+
+
+## Load packages
+```{r}
+# | output: false
+library(tidyverse)
+library(readr) # for reading in files
+library(here) # setting directory
+library(naniar) # for finding missing data
+```
+
+## Load data
+
+First, we will load the raw data.
+```{r}
+#load data from data folder
+data <- readRDS(here("fluanalysis/data/SympAct_Any_Pos.rda"))
+```
+
+## Data exploring and cleaning
+
+A quick overview of the imported data using the `summary()` function.
+```{r}
+#overview of data
+summary(data)
+```
+The symptom variables are mostly categorical, and there are diagnostic and other coding variables in the "DxName", "Impact", and "TotalSymp" columns that we will remove to focus specifically on the predictor and outcome variables of interest. 
+
+We will go ahead and remove the extra columns, producing a data frame with 735 rows and 32 columns.
+```{r}
+#remove extra columns
+data2 <- data %>% 
+  select(!contains("Total") &
+           !contains("Score") &
+           !contains("FluA") &
+           !contains("FluB") &
+           !contains("Dxname") &
+           !contains("Activity")) %>% 
+  select(!"Unique.Visit")
+dim(data2)
+```
+Now that we have the columns we need, we will check for any missing data and remove the NAs. 
+```{r}
+#check for NAs and drop
+gg_miss_var(data2)
+cleandata <- drop_na(data2)
+```
+
+## Save clean data
+The data has been cleaned! We will save the cleaned data as `cleandata` in the `data` folder. 
+```{r}
+#save cleaned data
+filelocation <- here("fluanalysis", "data", "cleandata.rds")
+save(cleandata, file = filelocation)
+```
+

@@ -1,0 +1,137 @@
+---
+title: "Exploration"
+output: html_document
+---
+
+The `Wrangling` script cleaned the raw data from the flu analysis. We will explore the data and look at the symptomatic variables. The main outcomes of interest are `Body Temperature` and `Nausea`. The other symptoms will be considered for predictors.
+
+## Load packages
+```{r}
+#| output: false
+library(tidyverse)
+library(ggplot2)
+library(here)
+library(gtsummary)
+```
+
+
+## Load data
+We will load the cleaned data from the `data` folder. To make coding easier, let's rename `cleandata` as `flu`
+```{r}
+#load cleaned data
+filelocation <- here("fluanalysis", "data", "cleandata.rds")
+load(filelocation)
+
+#rename dataset
+flu <- cleandata
+```
+
+## Overview of data
+First, we can look at the proportion of responses that said they had the symptom using `tbl_summary()` function from the `gtsummary` package.
+```{r}
+#create summary table
+sumtable <- tbl_summary(flu)
+
+sumtable
+```
+Body temperature had a median temperature of 98.50 for all responses, and 35% of respondents said they has nausea. 
+The most common symptoms were `cough`, `fatigue`,and `weakness` which was present in over 90% of responses. `CoughIntensity`, `Myalgia`, and `Weakness` all had multiple levels within the responses. 
+
+We can see similar information using the `summary` function.
+```{r}
+summary(flu)
+```
+With this function, `BodyTemp` is further described to show a maximum of 103.10 degrees, but based on the other statistical information, the observations are mostly below 100 degrees.
+
+## Plotting outcomes and potential predictors
+
+We can start looking at the outcome variables using visuals and plots.
+
+### Body temperature
+Starting the body temperature, we will plot the density curve of `BodyTemp`. 
+```{r}
+#density curve of body temperature
+ggplot(flu, aes(BodyTemp))+
+  geom_density()
+```
+Similar to the statistical summary, the density curve shows that most data points are between 97.5 and 99.5 with the most observations occurring at ~ 98.6 degrees. 
+
+### Body temperature and weakness
+We will first consider the relationship between body temperature and weakness using the `geom_violin` function.
+```{r}
+#plot body temperature against weakness
+ggplot(flu, aes(BodyTemp, Weakness, fill = Weakness))+
+  geom_violin()
+```
+The "None" category appears to have the lowest average body temperature, "Mild" and "Moderate" appear to have similar distributions, and "Severe" category has the highest average temperature. Each category have observations with high temperatures, shown by the right side tails. 
+
+### Body temperature and cough intensity
+
+Next, body temperature and cough intensity will be viewed using the `geom_boxplot` function.
+```{r}
+#plot body temperature and cough intensity
+ggplot(flu, aes(BodyTemp, CoughIntensity, fill = CoughIntensity))+
+  geom_boxplot()
+```
+Similar to weakness, the average body temperature seems to be highest in the "Severe" category. However, the medians for all these categories are similar. 
+
+### Body temperature and myalgia
+
+Next, looking at body temperature and myalgia. 
+```{r}
+#plot body temperature and myalgia
+ggplot(flu, aes(BodyTemp, Myalgia, fill = Myalgia))+
+  geom_violin()
+```
+Average body temperatures are similar for each category compared to the other variables we have looked at. 
+
+### Body temperature and runny nose
+
+We can also consider a didactic variable (Present/Absent). Let's consider `RunnyNose`. 
+```{r}
+#plot body temperature and runny nose
+ggplot(flu, aes(BodyTemp, RunnyNose, fill = RunnyNose))+
+  geom_violin()
+```
+With this variable, there appears to be little difference between runny nose categories, but the "Yes" distribution was concentrated heavily around approx. 98.3 degrees. 
+
+### Nausea
+
+Let's move on to the categorical outcome variable of interest.
+```{r}
+#plot nausea by count
+ggplot(flu, aes(Nausea, fill = Nausea))+
+  geom_bar()
+```
+### Nausea and weakness
+```{r}
+#plot nausea by weakness
+ggplot(flu, aes(Nausea, fill= Weakness))+
+  geom_bar(position = "dodge")
+```
+
+```{r}
+#plot nausea by cough intensity
+ggplot(flu, aes(Nausea, CoughIntensity, fill= CoughIntensity))+
+  geom_col(position = "dodge")
+```
+
+```{r}
+#plot nausea by myalgia
+ggplot(flu, aes(Nausea, Myalgia, fill= Myalgia))+
+  geom_col()+
+  scale_y_discrete(labels = NULL)
+```
+
+```{r}
+#plot nausea by runny nose
+ggplot(flu, aes(Nausea, RunnyNose, fill= RunnyNose))+
+  geom_col()+
+  scale_y_discrete(labels = NULL)
+```
+
+
+
+
+
+

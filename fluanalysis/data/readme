@@ -1,0 +1,6 @@
+This folder contains raw and processed data from the fluanalysis exercise. 
+
+The `SympAct_Any_Pos` file contains the raw data.This data was obtained from Brian McKay's paper found at https://datadryad.org/stash/dataset/doi:10.5061/dryad.51c59zw4v. The data will be cleaned in the `wrangling.qmd` file. The main outcomes I will focus on are body temperature and nausea. 
+
+The `cleandata` file contains the processed data.The data will be explored in the `exploration.qmd` file. The main predictors I will explore are Weakness, CoughIntensity, Myalgia, and RunnyNose,  to predict body temperature and nausea. 
+

@@ -1,0 +1,108 @@
+---
+title: "Fitting"
+output: html_document
+---
+
+## Load packages
+
+```{r}
+# | output: false
+library(tidymodels)
+library(tidyverse)
+library(performance)
+```
+
+
+## Load data
+
+```{r}
+filelocation <- here("fluanalysis", "data", "cleandata.rds")
+load(filelocation)
+
+flu <- cleandata
+```
+
+## Fit linear model: RunnyNose
+```{r}
+lm_mod <- linear_reg()
+
+RNlm_fit <- lm_mod %>% 
+  fit(BodyTemp ~ RunnyNose, data = flu)
+
+tidy(RNlm_fit)
+```
+```{r}
+new_points <- flu %>% 
+  expand.grid(BodyTemp = 98.50,
+              RunnyNose = c( "Yes", "No"))
+new_points
+```
+```{r}
+median_predict <- predict(RNlm_fit, new_data = new_points)
+
+tidy(median_predict)
+
+conf_int_pred <- predict(RNlm_fit,
+                         new_data = new_points,
+                         type = "conf_int")
+
+plot_data <- new_points %>% 
+  bind_cols(median_predict) %>% 
+  bind_cols(conf_int_pred)
+```
+```{r}
+ggplot(plot_data, aes(RunnyNose))+
+  geom_point(aes(y = .pred))+
+  geom_errorbar(aes(ymin = .pred_lower,
+                    ymax = .pred_upper),
+                width = 0.5) +
+  labs(y = "Body Temperature")
+```
+## Fit linear model: All symptoms
+```{r}
+lm_mod <- linear_reg()
+
+ASlm_fit <- lm_mod %>% 
+  fit(BodyTemp ~ ., data = flu)
+tidy(ASlm_fit)
+```
+
+```{r}
+glance(ASlm_fit)
+```
+
+## Compare linear models
+```{r}
+compare_performance(RNlm_fit,ASlm_fit)
+```
+
+## Fit logistic model: RunnyNose
+```{r}
+log_mod <- logistic_reg() %>% set_engine("glm")
+
+RNlog_fit <- log_mod %>% 
+  fit(Nausea ~ RunnyNose,
+      data = flu)
+
+tidy(RNlog_fit)
+```
+
+## Fit logistic model: All symptoms
+```{r}
+log_mod <- logistic_reg() %>% set_engine("glm")
+
+ASlog_fit <- log_mod %>% 
+  fit(Nausea ~ .,
+      data = flu)
+
+tidy(ASlog_fit)
+```
+
+## Compare logistic models
+
+```{r}
+compare_performance(RNlog_fit,ASlog_fit)
+```
+
+
+
