@@ -1,0 +1,172 @@
+---
+title: "Model Evaluation"
+output: html_document
+---
+
+This script will use the flu analysis data to evaluate the model predicting the main categorical outcome `Nausea` and main continuous outcome `BodyTemp`. 
+
+## Load packages
+```{r}
+#| output: false
+library(tidymodels)
+library(tidyverse)
+library(skimr)
+library(here)
+library(rsample)
+```
+
+## Load data
+```{r}
+#load data
+filelocation <- here("fluanalysis", "data", "cleandata.rds")
+load(filelocation)
+#reassign as flu
+flu <- cleandata
+```
+
+## Data splitting
+To start model evaluation, we will first split the data into training and testing sets. 
+
+```{r}
+#establish reproducibility by setting the seed
+set.seed(123)
+
+#add data to the training set
+data_split <- initial_split(flu, prop = 3/4)
+
+#create two data sets with 3/4 of data in training set
+train_data <- training(data_split)
+test_data <- testing(data_split)
+```
+
+## Create a recipe and workflow from all symptoms
+We will first create a recipe for a logistic regression model predicting `nausea` from all predictor variables. The recipe uses the `recipe()` function and will contain the formula and the data (the training set). 
+```{r}
+flu_rec <- 
+  recipe(Nausea ~ ., data = train_data)
+```
+
+Next we will set a model workflow to pair the model and recipe together. This will help when evaluating model based on the training and testing data set.
+
+```{r}
+#set model
+lr_mod <- logistic_reg() %>% 
+  set_engine("glm")
+
+flu_wflow <-
+  workflow() %>% 
+  add_model(lr_mod) %>% 
+  add_recipe(flu_rec)
+```
+
+We can create one function that will create the recipe and train the model using the `workflow()` and `fit()` functions.
+
+```{r}
+flu_fit <-
+  flu_wflow %>% 
+  fit(data = train_data)
+```
+
+To check the fitted model, the `extract_fit_parsnip()` function will display the fitted model.
+
+```{r}
+flu_fit %>% 
+  extract_fit_parsnip() %>% 
+  tidy()
+```
+
+## Predict from trained model
+Next, we can use the `test_data` set to predict from the trained model by using the `flu_fit`. 
+
+```{r}
+predict(flu_fit, test_data)
+```
+
+This output is not terribly helpful. The predicted probability of having nausea can be found by using the `augment()` function.
+
+```{r}
+flu_aug <- augment(flu_fit, test_data)
+```
+To evaluate the performance of the model, we will use the ROC curve and ROC-AUC as the metrics. Ideally, the model should have at least a value of 0.7 to be useful.
+
+```{r}
+levels(flu$Nausea)
+
+#generate ROC curve
+flu_aug %>% 
+  roc_curve(truth = Nausea, .pred_Yes, event_level = "second") %>% #must specify "second" since the positive event is "Yes" which is the second level
+  autoplot()
+
+#generate ROC-AUC
+flu_aug %>% 
+  roc_auc(truth = Nausea, .pred_Yes, event_level = "second")
+```
+The area under the ROC curve is 0.706 which indicates the model is somewhat useful. 
+
+We can also use the `train_data` to predict the from the model.
+
+```{r}
+#predict from training data
+flu_aug2 <- augment(flu_fit, train_data)
+
+#generate ROC curve
+flu_aug2 %>% 
+  roc_curve(truth = Nausea, .pred_Yes, event_level = "second") %>%
+  autoplot()
+
+#generate ROC-AUC
+flu_aug2 %>% 
+  roc_auc(truth = Nausea, .pred_Yes, event_level = "second")
+```
+The ROC-AUC is higher with the `train_data` than the `test_data` at 0.80 which is understandable since the model was fitted to the `train_data` set. 
+
+## Create recipe with runny nose as predictor
+Using all the same steps as above, we can predict nausea from runny nose. 
+```{r}
+#create recipe
+flu_recRN <- 
+  recipe(Nausea ~ RunnyNose, data = train_data)
+
+#create work flow
+flu_wflowRN <-
+  workflow() %>% 
+  add_model(lr_mod) %>% 
+  add_recipe(flu_recRN)
+
+#create fitted model
+flu_fitRN <-
+  flu_wflowRN %>% 
+  fit(data = train_data)
+```
+
+Predicting outcome from the `RunnyNose` fitted model.
+```{r}
+#create predictions
+flu_augRN <- augment(flu_fitRN, test_data)
+
+#generate ROC curve
+flu_augRN %>% 
+  roc_curve(truth = Nausea, .pred_Yes, event_level = "second") %>%
+  autoplot()
+
+#generate ROC-AUC
+flu_augRN %>% 
+  roc_auc(truth = Nausea, .pred_Yes, event_level = "second")
+```
+Using the `test_data` and `RunnyNose` as the predictor, the ROC-AUC is 0.460, indicating that the model is not helpful in predicting nausea.
+
+Evaluate the fitted model using the `train_data`.
+```{r}
+#predict from training data
+flu_augRN2 <- augment(flu_fit, train_data)
+
+#generate ROC curve
+flu_augRN2 %>% 
+  roc_curve(truth = Nausea, .pred_Yes, event_level = "second") %>%
+  autoplot()
+
+#generate ROC-AUC
+flu_augRN2 %>% 
+  roc_auc(truth = Nausea, .pred_Yes, event_level = "second")
+```
+Using the `train_data`, the ROC-AUC is 0.801 which is much different from the `test_data` evaluation. This is possibly due to the random distribution of the data, with the `train_data` having a higher correlation between `RunnyNose` and `Nausea` observations. This is a good example of why fitted models should not be evaluated using only the data used to fit the model. 

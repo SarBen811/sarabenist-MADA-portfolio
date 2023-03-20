@@ -231,6 +231,55 @@
     "text": "Compare logistic models\nWe can once again compare the models using the compare_performance function.\n\ncompare_performance(RNlog_fit,ASlog_fit)\n\nWarning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :\nprediction from a rank-deficient fit may be misleading\n\nWarning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :\nprediction from a rank-deficient fit may be misleading\n\nWarning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :\nprediction from a rank-deficient fit may be misleading\n\nWarning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :\nprediction from a rank-deficient fit may be misleading\n\n\n# Comparison of Model Performance Indices\n\nName      | Model | AIC (weights) | AICc (weights) | BIC (weights) | Tjur's R2 |  RMSE | Sigma | Log_loss | Score_log | Score_spherical |   PCP\n-----------------------------------------------------------------------------------------------------------------------------------------------\nRNlog_fit |  _glm | 948.6 (<.001) |  948.6 (<.001) | 957.8 (>.999) | 1.169e-04 | 0.477 | 1.139 |    0.647 |  -107.871 |           0.012 | 0.545\nASlog_fit |  _glm | 821.5 (>.999) |  825.1 (>.999) | 982.2 (<.001) |     0.247 | 0.414 | 1.040 |    0.515 |      -Inf |           0.002 | 0.658\n\n\nFollowing the same reasoning with the R2 and AIC that we used with the linear models, the all symptom model is a better fit of the data and explains more of the variation than the univariate model alone."
   },
   {
+    "objectID": "fluanalysis/code/modeleval.html",
+    "href": "fluanalysis/code/modeleval.html",
+    "title": "Model Evaluation",
+    "section": "",
+    "text": "This script will use the flu analysis data to evaluate the model predicting the main categorical outcome Nausea and main continuous outcome BodyTemp."
+  },
+  {
+    "objectID": "fluanalysis/code/modeleval.html#load-packages",
+    "href": "fluanalysis/code/modeleval.html#load-packages",
+    "title": "Model Evaluation",
+    "section": "Load packages",
+    "text": "Load packages\n\nlibrary(tidymodels)\nlibrary(tidyverse)\nlibrary(skimr)\nlibrary(here)\nlibrary(rsample)"
+  },
+  {
+    "objectID": "fluanalysis/code/modeleval.html#load-data",
+    "href": "fluanalysis/code/modeleval.html#load-data",
+    "title": "Model Evaluation",
+    "section": "Load data",
+    "text": "Load data\n\n#load data\nfilelocation <- here(\"fluanalysis\", \"data\", \"cleandata.rds\")\nload(filelocation)\n#reassign as flu\nflu <- cleandata"
+  },
+  {
+    "objectID": "fluanalysis/code/modeleval.html#data-splitting",
+    "href": "fluanalysis/code/modeleval.html#data-splitting",
+    "title": "Model Evaluation",
+    "section": "Data splitting",
+    "text": "Data splitting\nTo start model evaluation, we will first split the data into training and testing sets.\n\n#establish reproducibility by setting the seed\nset.seed(123)\n\n#add data to the training set\ndata_split <- initial_split(flu, prop = 3/4)\n\n#create two data sets with 3/4 of data in training set\ntrain_data <- training(data_split)\ntest_data <- testing(data_split)"
+  },
+  {
+    "objectID": "fluanalysis/code/modeleval.html#create-a-recipe-and-workflow-from-all-symptoms",
+    "href": "fluanalysis/code/modeleval.html#create-a-recipe-and-workflow-from-all-symptoms",
+    "title": "Model Evaluation",
+    "section": "Create a recipe and workflow from all symptoms",
+    "text": "Create a recipe and workflow from all symptoms\nWe will first create a recipe for a logistic regression model predicting nausea from all predictor variables. The recipe uses the recipe() function and will contain the formula and the data (the training set).\n\nflu_rec <- \n  recipe(Nausea ~ ., data = train_data)\n\nNext we will set a model workflow to pair the model and recipe together. This will help when evaluating model based on the training and testing data set.\n\n#set model\nlr_mod <- logistic_reg() %>% \n  set_engine(\"glm\")\n\nflu_wflow <-\n  workflow() %>% \n  add_model(lr_mod) %>% \n  add_recipe(flu_rec)\n\nWe can create one function that will create the recipe and train the model using the workflow() and fit() functions.\n\nflu_fit <-\n  flu_wflow %>% \n  fit(data = train_data)\n\nTo check the fitted model, the extract_fit_parsnip() function will display the fitted model.\n\nflu_fit %>% \n  extract_fit_parsnip() %>% \n  tidy()\n\n# A tibble: 38 × 5\n   term                  estimate std.error statistic p.value\n   <chr>                    <dbl>     <dbl>     <dbl>   <dbl>\n 1 (Intercept)          -2.42         9.14  -0.265     0.791 \n 2 SwollenLymphNodesYes -0.440        0.236 -1.86      0.0624\n 3 ChestCongestionYes    0.278        0.255  1.09      0.275 \n 4 ChillsSweatsYes       0.314        0.356  0.881     0.378 \n 5 NasalCongestionYes    0.213        0.302  0.707     0.480 \n 6 CoughYNYes           -0.000535     0.708 -0.000755  0.999 \n 7 SneezeYes             0.142        0.255  0.556     0.578 \n 8 FatigueYes            0.287        0.462  0.621     0.535 \n 9 SubjectiveFeverYes    0.434        0.276  1.57      0.116 \n10 HeadacheYes           0.634        0.367  1.73      0.0843\n# … with 28 more rows"
+  },
+  {
+    "objectID": "fluanalysis/code/modeleval.html#predict-from-trained-model",
+    "href": "fluanalysis/code/modeleval.html#predict-from-trained-model",
+    "title": "Model Evaluation",
+    "section": "Predict from trained model",
+    "text": "Predict from trained model\nNext, we can use the test_data set to predict from the trained model by using the flu_fit.\n\npredict(flu_fit, test_data)\n\nWarning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :\nprediction from a rank-deficient fit may be misleading\n\n\n# A tibble: 183 × 1\n   .pred_class\n   <fct>      \n 1 No         \n 2 Yes        \n 3 No         \n 4 No         \n 5 No         \n 6 No         \n 7 No         \n 8 No         \n 9 No         \n10 Yes        \n# … with 173 more rows\n\n\nThis output is not terribly helpful. The predicted probability of having nausea can be found by using the augment() function.\n\nflu_aug <- augment(flu_fit, test_data)\n\nWarning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :\nprediction from a rank-deficient fit may be misleading\n\nWarning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :\nprediction from a rank-deficient fit may be misleading\n\n\nTo evaluate the performance of the model, we will use the ROC curve and ROC-AUC as the metrics. Ideally, the model should have at least a value of 0.7 to be useful.\n\nlevels(flu$Nausea)\n\n[1] \"No\"  \"Yes\"\n\n#generate ROC curve\nflu_aug %>% \n  roc_curve(truth = Nausea, .pred_Yes, event_level = \"second\") %>% #must specify \"second\" since the positive event is \"Yes\" which is the second level\n  autoplot()\n\n\n\n#generate ROC-AUC\nflu_aug %>% \n  roc_auc(truth = Nausea, .pred_Yes, event_level = \"second\")\n\n# A tibble: 1 × 3\n  .metric .estimator .estimate\n  <chr>   <chr>          <dbl>\n1 roc_auc binary         0.706\n\n\nThe area under the ROC curve is 0.706 which indicates the model is somewhat useful.\nWe can also use the train_data to predict the from the model.\n\n#predict from training data\nflu_aug2 <- augment(flu_fit, train_data)\n\nWarning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :\nprediction from a rank-deficient fit may be misleading\n\nWarning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :\nprediction from a rank-deficient fit may be misleading\n\n#generate ROC curve\nflu_aug2 %>% \n  roc_curve(truth = Nausea, .pred_Yes, event_level = \"second\") %>%\n  autoplot()\n\n\n\n#generate ROC-AUC\nflu_aug2 %>% \n  roc_auc(truth = Nausea, .pred_Yes, event_level = \"second\")\n\n# A tibble: 1 × 3\n  .metric .estimator .estimate\n  <chr>   <chr>          <dbl>\n1 roc_auc binary         0.801\n\n\nThe ROC-AUC is higher with the train_data than the test_data at 0.80 which is understandable since the model was fitted to the trin_data set."
+  },
+  {
+    "objectID": "fluanalysis/code/modeleval.html#create-recipe-with-runny-nose-as-predictor",
+    "href": "fluanalysis/code/modeleval.html#create-recipe-with-runny-nose-as-predictor",
+    "title": "Model Evaluation",
+    "section": "Create recipe with runny nose as predictor",
+    "text": "Create recipe with runny nose as predictor\nUsing all the same steps as above, we can predict nausea from runny nose.\n\n#create recipe\nflu_recRN <- \n  recipe(Nausea ~ RunnyNose, data = train_data)\n\n#create work flow\nflu_wflowRN <-\n  workflow() %>% \n  add_model(lr_mod) %>% \n  add_recipe(flu_recRN)\n\n#create fitted model\nflu_fitRN <-\n  flu_wflowRN %>% \n  fit(data = train_data)\n\nPredicting from the fitted model.\n\n#create predictions\nflu_augRN <- augment(flu_fitRN, test_data)\n\n#generate ROC curve\nflu_augRN %>% \n  roc_curve(truth = Nausea, .pred_Yes, event_level = \"second\") %>%\n  autoplot()\n\n\n\n#generate ROC-AUC\nflu_augRN %>% \n  roc_auc(truth = Nausea, .pred_Yes, event_level = \"second\")\n\n# A tibble: 1 × 3\n  .metric .estimator .estimate\n  <chr>   <chr>          <dbl>\n1 roc_auc binary         0.460\n\n\nUsing the test_data and RunnyNose as the predictor, the ROC-AUC is 0.460, indicating that the model is not helpful in predicting nausea.\nEvaluate the fitted model using the train_data.\n\n#predict from training data\nflu_augRN2 <- augment(flu_fit, train_data)\n\nWarning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :\nprediction from a rank-deficient fit may be misleading\n\nWarning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :\nprediction from a rank-deficient fit may be misleading\n\n#generate ROC curve\nflu_augRN2 %>% \n  roc_curve(truth = Nausea, .pred_Yes, event_level = \"second\") %>%\n  autoplot()\n\n\n\n#generate ROC-AUC\nflu_augRN2 %>% \n  roc_auc(truth = Nausea, .pred_Yes, event_level = \"second\")\n\n# A tibble: 1 × 3\n  .metric .estimator .estimate\n  <chr>   <chr>          <dbl>\n1 roc_auc binary         0.801\n\n\nUsing the train_data, the ROC-AUC is 0.801 which is much different from the test_data evaluation. This is possibly due to the random distribution of the data, with the train_data having a higher correlation between RunnyNose and Nausea observations. This is a good example of why fitted models should not be evaluated using only the data used to fit the model."
+  },
+  {
     "objectID": "fluanalysis/code/wrangling.html",
     "href": "fluanalysis/code/wrangling.html",
     "title": "Wrangling",
