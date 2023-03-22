@@ -3,9 +3,10 @@ title: "Model Evaluation"
 output: html_document
 ---
 
-This script will use the flu analysis data to evaluate the model predicting the main categorical outcome `Nausea` and main continuous outcome `BodyTemp`. 
+This script will use the flu analysis data to evaluate the model predicting the main categorical outcome `Nausea` and main continuous outcome `BodyTemp`.
 
 ## Load packages
+
 ```{r}
 #| output: false
 library(tidymodels)
@@ -16,6 +17,7 @@ library(rsample)
 ```
 
 ## Load data
+
 ```{r}
 #load data
 filelocation <- here("fluanalysis", "data", "cleandata.rds")
@@ -25,7 +27,8 @@ flu <- cleandata
 ```
 
 ## Data splitting
-To start model evaluation, we will first split the data into training and testing sets. 
+
+To start model evaluation, we will first split the data into training and testing sets.
 
 ```{r}
 #establish reproducibility by setting the seed
@@ -40,7 +43,9 @@ test_data <- testing(data_split)
 ```
 
 ## Create a recipe and workflow from all symptoms
-We will first create a recipe for a logistic regression model predicting `nausea` from all predictor variables. The recipe uses the `recipe()` function and will contain the formula and the data (the training set). 
+
+We will first create a recipe for a logistic regression model predicting `nausea` from all predictor variables. The recipe uses the `recipe()` function and will contain the formula and the data (the training set).
+
 ```{r}
 flu_rec <- 
   recipe(Nausea ~ ., data = train_data)
@@ -76,7 +81,8 @@ flu_fit %>%
 ```
 
 ## Predict from trained model
-Next, we can use the `test_data` set to predict from the trained model by using the `flu_fit`. 
+
+Next, we can use the `test_data` set to predict from the trained model by using the `flu_fit`.
 
 ```{r}
 predict(flu_fit, test_data)
@@ -87,6 +93,7 @@ This output is not terribly helpful. The predicted probability of having nausea 
 ```{r}
 flu_aug <- augment(flu_fit, test_data)
 ```
+
 To evaluate the performance of the model, we will use the ROC curve and ROC-AUC as the metrics. Ideally, the model should have at least a value of 0.7 to be useful.
 
 ```{r}
@@ -101,7 +108,8 @@ flu_aug %>%
 flu_aug %>% 
   roc_auc(truth = Nausea, .pred_Yes, event_level = "second")
 ```
-The area under the ROC curve is 0.706 which indicates the model is somewhat useful. 
+
+The area under the ROC curve is 0.706 which indicates the model is somewhat useful.
 
 We can also use the `train_data` to predict the from the model.
 
@@ -118,10 +126,13 @@ flu_aug2 %>%
 flu_aug2 %>% 
   roc_auc(truth = Nausea, .pred_Yes, event_level = "second")
 ```
-The ROC-AUC is higher with the `train_data` than the `test_data` at 0.80 which is understandable since the model was fitted to the `train_data` set. 
+
+The ROC-AUC is higher with the `train_data` than the `test_data` at 0.80 which is understandable since the model was fitted to the `train_data` set.
 
 ## Create recipe with runny nose as predictor
-Using all the same steps as above, we can predict nausea from runny nose. 
+
+Using all the same steps as above, we can predict nausea from runny nose.
+
 ```{r}
 #create recipe
 flu_recRN <- 
@@ -140,6 +151,7 @@ flu_fitRN <-
 ```
 
 Predicting outcome from the `RunnyNose` fitted model.
+
 ```{r}
 #create predictions
 flu_augRN <- augment(flu_fitRN, test_data)
@@ -153,9 +165,11 @@ flu_augRN %>%
 flu_augRN %>% 
   roc_auc(truth = Nausea, .pred_Yes, event_level = "second")
 ```
+
 Using the `test_data` and `RunnyNose` as the predictor, the ROC-AUC is 0.460, indicating that the model is not helpful in predicting nausea.
 
 Evaluate the fitted model using the `train_data`.
+
 ```{r}
 #predict from training data
 flu_augRN2 <- augment(flu_fit, train_data)
@@ -169,4 +183,111 @@ flu_augRN2 %>%
 flu_augRN2 %>% 
   roc_auc(truth = Nausea, .pred_Yes, event_level = "second")
 ```
-Using the `train_data`, the ROC-AUC is 0.801 which is much different from the `test_data` evaluation. This is possibly due to the random distribution of the data, with the `train_data` having a higher correlation between `RunnyNose` and `Nausea` observations. This is a good example of why fitted models should not be evaluated using only the data used to fit the model. 
+
+Using the `train_data`, the ROC-AUC is 0.801 which is much different from the `test_data` evaluation. This is possibly due to the random distribution of the data, with the `train_data` having a higher correlation between `RunnyNose` and `Nausea` observations. This is a good example of why fitted models should not be evaluated using only the data used to fit the model.
+
+# This section added by Leah Lariscy
+
+## Create workflow for a linear regression
+
+This will be used to predict body temp from all other variables
+
+```{r}
+lm_mod <- linear_reg() #define model
+
+recipe_bodytemp <- recipe(BodyTemp ~ ., data = train_data) #set recipe to predict body temp using all variables
+
+bodytemp_lm_workflow <- workflow() %>% #combine model and recipe to make workflow
+  add_model(lm_mod) %>% 
+  add_recipe(recipe_bodytemp)
+```
+
+## Data fitting
+
+```{r}
+set.seed(626)
+bodytemp_fit <- bodytemp_lm_workflow %>% 
+  fit(data = train_data)
+tidy(bodytemp_fit)
+```
+
+## Model evaluation on training data
+
+```{r}
+bodytemp_aug <- augment(bodytemp_fit, train_data)
+bodytemp_aug %>% select(BodyTemp, .pred)
+bodytemp_aug %>% 
+  rmse(truth = BodyTemp, .pred)
+
+bodytemp_aug %>% ggplot(aes(.pred, BodyTemp)) +
+  geom_point()
+```
+
+Looking at the plot, there doesn't appear to be a strong relationship here.
+
+## Model evaluation on testing data
+
+```{r}
+bodytemp_aug_2 <- augment(bodytemp_fit, test_data)
+bodytemp_aug_2 %>% select(BodyTemp, .pred)
+bodytemp_aug_2 %>% 
+  rmse(truth = BodyTemp, .pred)
+
+bodytemp_aug_2 %>% ggplot(aes(.pred, BodyTemp)) +
+  geom_point()
+```
+
+Not seeing a strong relationship in the testing data either
+
+## Create workflow for linear regression pt. 2
+
+This will be used to predict body temp from runny nose data
+
+```{r}
+lm_mod <- linear_reg() #define model
+
+recipe_bodytemp2 <- recipe(BodyTemp ~ RunnyNose, data = train_data) #set recipe to predict body temp using runny nose
+
+bodytemp_lm_workflow2 <- workflow() %>% #combine model and recipe to make workflow
+  add_model(lm_mod) %>% 
+  add_recipe(recipe_bodytemp2)
+```
+
+## Data fitting
+
+```{r}
+set.seed(626)
+bodytemp_fit <- bodytemp_lm_workflow %>% 
+  fit(data = train_data)
+tidy(bodytemp_fit)
+```
+
+## Model evaluation on training data
+
+```{r}
+bodytemp_aug3 <- augment(bodytemp_fit, train_data)
+bodytemp_aug3 %>% select(BodyTemp, .pred)
+bodytemp_aug3 %>% 
+  rmse(truth = BodyTemp, .pred)
+
+bodytemp_aug3 %>% ggplot(aes(.pred, BodyTemp)) +
+  geom_point()
+```
+
+There is a slight positive correlation but not really.
+
+## Model evaluation on testing data
+
+```{r}
+bodytemp_aug_4 <- augment(bodytemp_fit, test_data)
+bodytemp_aug_4 %>% select(BodyTemp, .pred)
+bodytemp_aug_4 %>% 
+  rmse(truth = BodyTemp, .pred)
+
+bodytemp_aug_4 %>% ggplot(aes(.pred, BodyTemp)) +
+  geom_point()
+```
+
+No correlation
+
+Overall, I don't think the flu symptom is very predictive of body temperature.
