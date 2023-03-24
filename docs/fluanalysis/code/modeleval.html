@@ -402,7 +402,7 @@ prediction from a rank-deficient fit may be misleading</code></pre>
 1 roc_auc binary         0.801</code></pre>
 </div>
 </div>
-<p>The ROC-AUC is higher with the <code>train_data</code> than the <code>test_data</code> at 0.80 which is understandable since the model was fitted to the <code>trin_data</code> set.</p>
+<p>The ROC-AUC is higher with the <code>train_data</code> than the <code>test_data</code> at 0.80 which is understandable since the model was fitted to the <code>train_data</code> set.</p>
 </section>
 <section id="create-recipe-with-runny-nose-as-predictor" class="level2">
 <h2 class="anchored" data-anchor-id="create-recipe-with-runny-nose-as-predictor">Create recipe with runny nose as predictor</h2>
@@ -423,7 +423,7 @@ prediction from a rank-deficient fit may be misleading</code></pre>
 <span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  flu_wflowRN <span class="sc">%&gt;%</span> </span>
 <span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(<span class="at">data =</span> train_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Predicting from the fitted model.</p>
+<p>Predicting outcome from the <code>RunnyNose</code> fitted model.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#create predictions</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>flu_augRN <span class="ot">&lt;-</span> <span class="fu">augment</span>(flu_fitRN, test_data)</span>
@@ -475,8 +475,252 @@ prediction from a rank-deficient fit may be misleading</code></pre>
 </div>
 </div>
 <p>Using the <code>train_data</code>, the ROC-AUC is 0.801 which is much different from the <code>test_data</code> evaluation. This is possibly due to the random distribution of the data, with the <code>train_data</code> having a higher correlation between <code>RunnyNose</code> and <code>Nausea</code> observations. This is a good example of why fitted models should not be evaluated using only the data used to fit the model.</p>
+</section>
+<section id="this-section-added-by-leah-lariscy" class="level1">
+<h1>This section added by Leah Lariscy</h1>
+<section id="create-workflow-for-a-linear-regression" class="level2">
+<h2 class="anchored" data-anchor-id="create-workflow-for-a-linear-regression">Create workflow for a linear regression</h2>
+<p>This will be used to predict body temp from all other variables</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>lm_mod <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>() <span class="co">#define model</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>recipe_bodytemp <span class="ot">&lt;-</span> <span class="fu">recipe</span>(BodyTemp <span class="sc">~</span> ., <span class="at">data =</span> train_data) <span class="co">#set recipe to predict body temp using all variables</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>bodytemp_lm_workflow <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="co">#combine model and recipe to make workflow</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(lm_mod) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(recipe_bodytemp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-fitting" class="level2">
+<h2 class="anchored" data-anchor-id="data-fitting">Data fitting</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">626</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>bodytemp_fit <span class="ot">&lt;-</span> bodytemp_lm_workflow <span class="sc">%&gt;%</span> </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(<span class="at">data =</span> train_data)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(bodytemp_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 38 × 5
+   term                 estimate std.error statistic   p.value
+   &lt;chr&gt;                   &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+ 1 (Intercept)           98.2        0.351   279.    0        
+ 2 SwollenLymphNodesYes  -0.104      0.108    -0.964 0.336    
+ 3 ChestCongestionYes     0.0354     0.114     0.309 0.758    
+ 4 ChillsSweatsYes        0.288      0.151     1.90  0.0576   
+ 5 NasalCongestionYes    -0.199      0.133    -1.49  0.136    
+ 6 CoughYNYes             0.497      0.339     1.47  0.143    
+ 7 SneezeYes             -0.390      0.117    -3.34  0.000892 
+ 8 FatigueYes             0.373      0.187     1.99  0.0468   
+ 9 SubjectiveFeverYes     0.518      0.123     4.22  0.0000287
+10 HeadacheYes           -0.0510     0.151    -0.339 0.735    
+# … with 28 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="model-evaluation-on-training-data" class="level2">
+<h2 class="anchored" data-anchor-id="model-evaluation-on-training-data">Model evaluation on training data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug <span class="ot">&lt;-</span> <span class="fu">augment</span>(bodytemp_fit, train_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in predict.lm(object = object$fit, newdata = new_data, type =
+"response"): prediction from a rank-deficient fit may be misleading</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug <span class="sc">%&gt;%</span> <span class="fu">select</span>(BodyTemp, .pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 547 × 2
+   BodyTemp .pred
+      &lt;dbl&gt; &lt;dbl&gt;
+ 1     98.5  99.4
+ 2     98.6  98.5
+ 3     98.5  99.0
+ 4    101.   99.5
+ 5     98.5  97.8
+ 6    100.   99.3
+ 7     98.3  98.6
+ 8     98.7  98.6
+ 9     98.5  99.3
+10    102.   99.2
+# … with 537 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug <span class="sc">%&gt;%</span> </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rmse</span>(<span class="at">truth =</span> BodyTemp, .pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .metric .estimator .estimate
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+1 rmse    standard        1.12</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(.pred, BodyTemp)) <span class="sc">+</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="modeleval_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Looking at the plot, there doesn’t appear to be a strong relationship here.</p>
+</section>
+<section id="model-evaluation-on-testing-data" class="level2">
+<h2 class="anchored" data-anchor-id="model-evaluation-on-testing-data">Model evaluation on testing data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug_2 <span class="ot">&lt;-</span> <span class="fu">augment</span>(bodytemp_fit, test_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in predict.lm(object = object$fit, newdata = new_data, type =
+"response"): prediction from a rank-deficient fit may be misleading</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug_2 <span class="sc">%&gt;%</span> <span class="fu">select</span>(BodyTemp, .pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 183 × 2
+   BodyTemp .pred
+      &lt;dbl&gt; &lt;dbl&gt;
+ 1     98.3  99.5
+ 2    101.   98.4
+ 3     98.8  99.0
+ 4     98.5  98.7
+ 5     98.1  98.5
+ 6     98.4  99.0
+ 7     99.5  99.5
+ 8     98.8  99.7
+ 9    102.   98.9
+10     99.7  99.6
+# … with 173 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug_2 <span class="sc">%&gt;%</span> </span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rmse</span>(<span class="at">truth =</span> BodyTemp, .pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .metric .estimator .estimate
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+1 rmse    standard        1.15</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug_2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(.pred, BodyTemp)) <span class="sc">+</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="modeleval_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Not seeing a strong relationship in the testing data either</p>
+</section>
+<section id="create-workflow-for-linear-regression-pt.-2" class="level2">
+<h2 class="anchored" data-anchor-id="create-workflow-for-linear-regression-pt.-2">Create workflow for linear regression pt.&nbsp;2</h2>
+<p>This will be used to predict body temp from runny nose data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>lm_mod <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>() <span class="co">#define model</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>recipe_bodytemp2 <span class="ot">&lt;-</span> <span class="fu">recipe</span>(BodyTemp <span class="sc">~</span> RunnyNose, <span class="at">data =</span> train_data) <span class="co">#set recipe to predict body temp using runny nose</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>bodytemp_lm_workflow2 <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="co">#combine model and recipe to make workflow</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(lm_mod) <span class="sc">%&gt;%</span> </span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(recipe_bodytemp2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-fitting-1" class="level2">
+<h2 class="anchored" data-anchor-id="data-fitting-1">Data fitting</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">626</span>)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>bodytemp_fit <span class="ot">&lt;-</span> bodytemp_lm_workflow <span class="sc">%&gt;%</span> </span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(<span class="at">data =</span> train_data)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(bodytemp_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 38 × 5
+   term                 estimate std.error statistic   p.value
+   &lt;chr&gt;                   &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+ 1 (Intercept)           98.2        0.351   279.    0        
+ 2 SwollenLymphNodesYes  -0.104      0.108    -0.964 0.336    
+ 3 ChestCongestionYes     0.0354     0.114     0.309 0.758    
+ 4 ChillsSweatsYes        0.288      0.151     1.90  0.0576   
+ 5 NasalCongestionYes    -0.199      0.133    -1.49  0.136    
+ 6 CoughYNYes             0.497      0.339     1.47  0.143    
+ 7 SneezeYes             -0.390      0.117    -3.34  0.000892 
+ 8 FatigueYes             0.373      0.187     1.99  0.0468   
+ 9 SubjectiveFeverYes     0.518      0.123     4.22  0.0000287
+10 HeadacheYes           -0.0510     0.151    -0.339 0.735    
+# … with 28 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="model-evaluation-on-training-data-1" class="level2">
+<h2 class="anchored" data-anchor-id="model-evaluation-on-training-data-1">Model evaluation on training data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug3 <span class="ot">&lt;-</span> <span class="fu">augment</span>(bodytemp_fit, train_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in predict.lm(object = object$fit, newdata = new_data, type =
+"response"): prediction from a rank-deficient fit may be misleading</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug3 <span class="sc">%&gt;%</span> <span class="fu">select</span>(BodyTemp, .pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 547 × 2
+   BodyTemp .pred
+      &lt;dbl&gt; &lt;dbl&gt;
+ 1     98.5  99.4
+ 2     98.6  98.5
+ 3     98.5  99.0
+ 4    101.   99.5
+ 5     98.5  97.8
+ 6    100.   99.3
+ 7     98.3  98.6
+ 8     98.7  98.6
+ 9     98.5  99.3
+10    102.   99.2
+# … with 537 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug3 <span class="sc">%&gt;%</span> </span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rmse</span>(<span class="at">truth =</span> BodyTemp, .pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .metric .estimator .estimate
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+1 rmse    standard        1.12</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug3 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(.pred, BodyTemp)) <span class="sc">+</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="modeleval_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>There is a slight positive correlation but not really.</p>
+</section>
+<section id="model-evaluation-on-testing-data-1" class="level2">
+<h2 class="anchored" data-anchor-id="model-evaluation-on-testing-data-1">Model evaluation on testing data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug_4 <span class="ot">&lt;-</span> <span class="fu">augment</span>(bodytemp_fit, test_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in predict.lm(object = object$fit, newdata = new_data, type =
+"response"): prediction from a rank-deficient fit may be misleading</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug_4 <span class="sc">%&gt;%</span> <span class="fu">select</span>(BodyTemp, .pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 183 × 2
+   BodyTemp .pred
+      &lt;dbl&gt; &lt;dbl&gt;
+ 1     98.3  99.5
+ 2    101.   98.4
+ 3     98.8  99.0
+ 4     98.5  98.7
+ 5     98.1  98.5
+ 6     98.4  99.0
+ 7     99.5  99.5
+ 8     98.8  99.7
+ 9    102.   98.9
+10     99.7  99.6
+# … with 173 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug_4 <span class="sc">%&gt;%</span> </span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rmse</span>(<span class="at">truth =</span> BodyTemp, .pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .metric .estimator .estimate
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+1 rmse    standard        1.15</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>bodytemp_aug_4 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(.pred, BodyTemp)) <span class="sc">+</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="modeleval_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>No correlation</p>
+<p>Overall, I don’t think the flu symptom is very predictive of body temperature.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
