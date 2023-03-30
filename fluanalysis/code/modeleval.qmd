@@ -26,6 +26,11 @@ load(filelocation)
 flu <- cleandata
 ```
 
+```{r}
+flu <- flu %>% 
+  select(!c("Vision","Hearing")) #remove columns with <50 entries in one category
+```
+
 ## Data splitting
 
 To start model evaluation, we will first split the data into training and testing sets.
@@ -42,13 +47,16 @@ train_data <- training(data_split)
 test_data <- testing(data_split)
 ```
 
+
 ## Create a recipe and workflow from all symptoms
 
 We will first create a recipe for a logistic regression model predicting `nausea` from all predictor variables. The recipe uses the `recipe()` function and will contain the formula and the data (the training set).
 
 ```{r}
 flu_rec <- 
-  recipe(Nausea ~ ., data = train_data)
+  recipe(Nausea ~ . , data = train_data) %>%
+  step_dummy(all_nominal(), -all_outcomes()) %>% 
+  step_ordinalscore()
 ```
 
 Next we will set a model workflow to pair the model and recipe together. This will help when evaluating model based on the training and testing data set.
@@ -136,7 +144,9 @@ Using all the same steps as above, we can predict nausea from runny nose.
 ```{r}
 #create recipe
 flu_recRN <- 
-  recipe(Nausea ~ RunnyNose, data = train_data)
+  recipe(Nausea ~ RunnyNose, data = train_data)%>%
+  step_dummy(all_nominal(), -all_outcomes()) %>% 
+  step_ordinalscore()
 
 #create work flow
 flu_wflowRN <-
@@ -195,7 +205,9 @@ This will be used to predict body temp from all other variables
 ```{r}
 lm_mod <- linear_reg() #define model
 
-recipe_bodytemp <- recipe(BodyTemp ~ ., data = train_data) #set recipe to predict body temp using all variables
+recipe_bodytemp <- recipe(BodyTemp ~ ., data = train_data)%>% #set recipe to predict body temp using all variables
+  step_dummy(all_nominal(), -all_outcomes()) %>% 
+  step_ordinalscore()
 
 bodytemp_lm_workflow <- workflow() %>% #combine model and recipe to make workflow
   add_model(lm_mod) %>% 
@@ -246,7 +258,9 @@ This will be used to predict body temp from runny nose data
 ```{r}
 lm_mod <- linear_reg() #define model
 
-recipe_bodytemp2 <- recipe(BodyTemp ~ RunnyNose, data = train_data) #set recipe to predict body temp using runny nose
+recipe_bodytemp2 <- recipe(BodyTemp ~ RunnyNose, data = train_data) %>%  #set recipe to predict body temp using runny nose %>%
+  step_dummy(all_nominal(), -all_outcomes()) %>% 
+  step_ordinalscore()
 
 bodytemp_lm_workflow2 <- workflow() %>% #combine model and recipe to make workflow
   add_model(lm_mod) %>% 

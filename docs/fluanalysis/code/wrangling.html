@@ -455,10 +455,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>[1] 735  32</code></pre>
 </div>
 </div>
+<p>We can also see that some variables have both a Yes/No question and a level of severity. We can remove the Yes/No columns and keep only the severity, which should remove 4 variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#remove Yes/No columns if variable also has severity levels</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> data2 <span class="sc">%&gt;%</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">!</span><span class="fu">contains</span>(<span class="st">"WeaknessYN"</span>) <span class="sc">&amp;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!</span><span class="fu">contains</span>(<span class="st">"CoughYN"</span>) <span class="sc">&amp;</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!</span><span class="fu">contains</span>(<span class="st">"CoughYN2"</span>) <span class="sc">&amp;</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!</span><span class="fu">contains</span>(<span class="st">"MyalgiaYN"</span>))</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(data2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 735  28</code></pre>
+</div>
+</div>
 <p>Now that we have the columns we need, we will check for any missing data and remove the NAs.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#check for NAs and drop</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(data2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#check for NAs and drop</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(data2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: The `guide` argument in `scale_*()` cannot be `FALSE`. This was deprecated in
 ggplot2 3.3.4.
@@ -467,18 +480,18 @@ ggplot2 3.3.4.
   Please report the issue at &lt;https://github.com/njtierney/naniar/issues&gt;.</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="wrangling_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+<p><img src="wrangling_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>cleandata <span class="ot">&lt;-</span> <span class="fu">drop_na</span>(data2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>cleandata <span class="ot">&lt;-</span> <span class="fu">drop_na</span>(data2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="save-clean-data" class="level2">
 <h2 class="anchored" data-anchor-id="save-clean-data">Save clean data</h2>
 <p>The data has been cleaned! We will save the cleaned data as <code>cleandata</code> in the <code>data</code> folder.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#save cleaned data</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>filelocation <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"fluanalysis"</span>, <span class="st">"data"</span>, <span class="st">"cleandata.rds"</span>)</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(cleandata, <span class="at">file =</span> filelocation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#save cleaned data</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>filelocation <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"fluanalysis"</span>, <span class="st">"data"</span>, <span class="st">"cleandata.rds"</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(cleandata, <span class="at">file =</span> filelocation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 

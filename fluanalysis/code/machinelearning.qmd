@@ -1,0 +1,216 @@
+---
+title: "Machine Learning"
+output: html_document
+---
+
+For the machine learning exercise, we will use the `flu` data and focus on Body Temperature as the outcome. 
+
+## Load packages
+
+
+```{r}
+#| output: false
+library(tidymodels)
+library(tidyverse)
+library(skimr)
+library(here)
+library(rsample)
+library(rpart.plot)
+library(vip)
+library(glmnet)
+library(ranger)
+```
+
+## Load data
+
+```{r}
+#load data
+filelocation <- here("fluanalysis", "data", "cleandata.rds")
+load(filelocation)
+#reassign as flu
+flu <- cleandata
+
+flu <- flu %>% 
+  select(!c("Vision","Hearing")) #remove columns with <50 entries in one category
+```
+
+## Data splitting
+
+```{r}
+#establish reproducibility by setting the seed
+set.seed(123)
+
+#add data to the training set
+data_split1 <- initial_split(flu, prop = 7/10, strata = BodyTemp)
+
+#create two data sets with 70/30% of data in training set
+train_data1 <- training(data_split1)
+test_data1 <- testing(data_split1)
+```
+
+## Cross Validation & Workflow
+
+```{r}
+folds <- vfold_cv(train_data1, v = 5)
+
+ml_rec <- recipe(BodyTemp ~., data = train_data1) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_ordinalscore()
+
+lm_mod <- linear_reg() 
+
+ml_wf <- workflow() %>% 
+  add_model(lm_mod) %>% 
+  add_recipe(ml_rec)
+```
+
+## Null model
+
+```{r}
+nullmod <- null_model() %>% 
+  set_engine("parsnip") %>% 
+  set_mode("regression") %>% 
+  translate()
+
+nullmodwf <- workflow() %>% 
+  add_model(nullmod) %>% 
+  add_recipe(ml_rec)
+
+nullmodfit <- nullmodwf %>% 
+  fit(data = train_data1)
+```
+
+```{r}
+nullmod_predtrain <-augment(nullmodfit, train_data1) %>% 
+  rmse(truth = BodyTemp, .pred)
+nullmod_predtrain
+```
+
+```{r}
+nullmod_predtest <-augment(nullmodfit, test_data1) %>% 
+  rmse(truth = BodyTemp, .pred)
+nullmod_predtest
+```
+
+
+## Model tuning and fitting
+
+### Tree model specification
+```{r}
+tune_spec <- decision_tree(
+  cost_complexity = tune(),
+  tree_depth = tune()
+) %>% 
+  set_engine("rpart") %>% 
+  set_mode("regression")
+```
+### Tree model workflow
+```{r}
+tree_wf <- workflow() %>% 
+  add_model(tune_spec) %>% 
+  add_recipe(ml_rec)
+```
+### Tree model grid specification
+```{r}
+tree_grid <- grid_regular(cost_complexity(),
+                          tree_depth(),
+                          levels = 5)
+```
+### Tree model tuning with cross-validation
+```{r}
+tree_res <- tree_wf %>% 
+  tune_grid(
+    resamples = folds,
+    grid = tree_grid
+  )
+```
+
+```{r}
+tree_res %>%
+  autoplot()
+```
+```{r}
+best_tree <- tree_res %>% select_best("rmse")
+best_tree
+
+treefinal_wf <- tree_wf %>% 
+  finalize_workflow(best_tree)
+
+treefinal_fit <- treefinal_wf %>% 
+  last_fit(data_split1) #fits for test data
+
+treefinal_fit %>% collect_metrics() #double check, higher than nullmodel
+```
+
+```{r}
+final_tree <- extract_workflow(treefinal_fit)
+
+final_tree %>% 
+  extract_fit_engine() %>% 
+  rpart.plot(roundint = FALSE)
+```
+
+```{r}
+final_tree %>% 
+  extract_fit_parsnip() %>% 
+  vip()
+```
+### Plots for Tree model - test data
+
+```{r}
+tree_test_resd <- augment(treefinal_fit) %>% 
+  select(c(.pred, BodyTemp)) %>% 
+  mutate(.resid = BodyTemp - .pred)
+```
+
+```{r}
+testtreeplot1 <- ggplot(tree_test_resd)+
+  geom_point(aes(BodyTemp, .pred))
+testtreeplot1
+```
+
+```{r}
+testtreeplot2 <- ggplot(tree_test_resd)+
+  geom_point(aes(BodyTemp,.resid))
+testtreeplot2
+```
+### Tree modeling with Training data
+
+```{r}
+treefinal_fit2 <- treefinal_wf %>% 
+  fit(data = train_data1) #fits for test data
+
+treefinal_fitaug <- augment(treefinal_fit2, train_data1) %>%
+  rmse(truth = BodyTemp, .pred)
+treefinal_fitaug
+```
+
+```{r}
+treefinal_fit2 %>% 
+  extract_fit_parsnip() %>% 
+  vip()
+```
+
+### Plots for Tree model - test data
+
+```{r}
+tree_train_resd <- augment(treefinal_fit2, train_data1) %>% 
+  select(c(.pred, BodyTemp)) %>% 
+  mutate(.resid = BodyTemp - .pred)
+```
+
+```{r}
+traintreeplot1 <- ggplot(tree_train_resd)+
+  geom_point(aes(BodyTemp, .pred))
+traintreeplot1
+```
+
+```{r}
+traintreeplot2 <- ggplot(tree_train_resd)+
+  geom_point(aes(BodyTemp,.resid))
+traintreeplot2
+```
+### LASSO model
+
+
+### Random forest model
