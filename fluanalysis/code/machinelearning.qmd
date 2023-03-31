@@ -3,35 +3,35 @@ title: "Machine Learning"
 output: html_document
 ---
 
-For the machine learning exercise, we will use the `flu` data and focus on Body Temperature as the outcome. 
+For the machine learning exercise, we will use the `flu` data and focus on Body Temperature as the outcome. We will be using the Decision Tree model, LASSO model, and Random forest model to determine the best performing model.
 
 ## Load packages
-
-
 ```{r}
 #| output: false
 library(tidymodels)
 library(tidyverse)
-library(skimr)
 library(here)
 library(rsample)
 library(rpart.plot)
 library(vip)
 library(glmnet)
 library(ranger)
+library(ggplot2)
+library(ggfortify)
 ```
 
 ## Load data
-
 ```{r}
 #load data
 filelocation <- here("fluanalysis", "data", "cleandata.rds")
 load(filelocation)
+
 #reassign as flu
 flu <- cleandata
 
+#remove columns with <50 entries in one category
 flu <- flu %>% 
-  select(!c("Vision","Hearing")) #remove columns with <50 entries in one category
+  select(!c("Vision","Hearing")) 
 ```
 
 ## Data splitting
@@ -40,177 +40,491 @@ flu <- flu %>%
 #establish reproducibility by setting the seed
 set.seed(123)
 
-#add data to the training set
+#stratify data split to balance outcomes between data sets
 data_split1 <- initial_split(flu, prop = 7/10, strata = BodyTemp)
 
-#create two data sets with 70/30% of data in training set
+#create two data sets with 70% of data in training set
 train_data1 <- training(data_split1)
 test_data1 <- testing(data_split1)
 ```
 
-## Cross Validation & Workflow
+## Cross Validation & Workflow set up
 
 ```{r}
+#set seed for reproducibility
+set.seed(123)
 folds <- vfold_cv(train_data1, v = 5)
 
+#create recipe for machine learning
+#step_ functions create dummy variables and order the severity columns
 ml_rec <- recipe(BodyTemp ~., data = train_data1) %>% 
   step_dummy(all_nominal_predictors()) %>% 
   step_ordinalscore()
 
+#set linear regression
 lm_mod <- linear_reg() 
 
+#create machine learning workflow
 ml_wf <- workflow() %>% 
   add_model(lm_mod) %>% 
   add_recipe(ml_rec)
 ```
 
 ## Null model
-
+We will use the null model as comparison for the other models. All other models should perform better than the null model since this model does not use any of the predictor variables.
 ```{r}
+#set null model using null_model() function
 nullmod <- null_model() %>% 
   set_engine("parsnip") %>% 
-  set_mode("regression") %>% 
-  translate()
+  set_mode("regression")
 
+#create null recipe
+null_rec <- recipe(BodyTemp ~ ., data = train_data1)%>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_ordinalscore()
+
+#create null workflow
 nullmodwf <- workflow() %>% 
   add_model(nullmod) %>% 
-  add_recipe(ml_rec)
+  add_recipe(null_rec)
 
+#fit the null model to training data
 nullmodfit <- nullmodwf %>% 
   fit(data = train_data1)
 ```
 
+The null model can be used to make predictions of the outcome, but without any predictors, the model will produce the mean body temperature for the training and test data. The `rmse()` function will produce the metric for this model.
 ```{r}
-nullmod_predtrain <-augment(nullmodfit, train_data1) %>% 
+#use null model to make predictions from training data
+nullmod_predtrain <- augment(nullmodfit, train_data1) %>% 
   rmse(truth = BodyTemp, .pred)
 nullmod_predtrain
 ```
 
 ```{r}
+#use null model to make predictions from test data
 nullmod_predtest <-augment(nullmodfit, test_data1) %>% 
-  rmse(truth = BodyTemp, .pred)
+  rmse(BodyTemp, .pred)
 nullmod_predtest
 ```
-
+The training null model has a RMSE of *1.209* and the test null model performs slightly better with a RMSE of *1.163*.
 
 ## Model tuning and fitting
+For each model, we will use the `tune()` function to find the best parameters during the cross-validation step. After finding the best model based on our performance metric RMSE, we will fit the best model. 
 
 ### Tree model specification
 ```{r}
+#set up decision tree model and tune the parameters
 tune_spec <- decision_tree(
-  cost_complexity = tune(),
-  tree_depth = tune()
+  cost_complexity = tune(), #one parameter we will tune
+  tree_depth = tune() #another parameter
 ) %>% 
-  set_engine("rpart") %>% 
-  set_mode("regression")
+  set_engine("rpart") %>% #specify engine
+  set_mode("regression") #regression due to continuous outcome
 ```
+
 ### Tree model workflow
 ```{r}
+#create decision tree workflow
 tree_wf <- workflow() %>% 
   add_model(tune_spec) %>% 
-  add_recipe(ml_rec)
+  add_recipe(ml_rec) #can use the general machine learning recipe
 ```
 ### Tree model grid specification
+The `grid_regular()` will produce values of the parameters that we test to find the best model. For each value of tree depth, 5 cost_complexity values will be tested.
 ```{r}
+#create grid of resampled values for cross-validation
 tree_grid <- grid_regular(cost_complexity(),
                           tree_depth(),
-                          levels = 5)
+                          levels = 5) #produces 5x5 = 25 combinations
 ```
 ### Tree model tuning with cross-validation
+Cross-validation is required for tuning models. In order to find the best model, we can use resampled data from the training set to test the models against "new data" in order to see the variation within the model.
 ```{r}
+set.seed(123)
 tree_res <- tree_wf %>% 
   tune_grid(
     resamples = folds,
-    grid = tree_grid
+    grid = tree_grid,
+    control = control_grid(save_pred = TRUE)
   )
 ```
-
+Plotting the resampled models produces a summary of the RMSE in the top row. A lower RMSE is preferred.
 ```{r}
 tree_res %>%
   autoplot()
 ```
+It would appear that the model with tree_depth = 1 has the best RMSE.
+### Tree model performance
+To confirm the best performing tree model, we can use `select_best()` function and extract the metrics.
 ```{r}
+#select best tree model
 best_tree <- tree_res %>% select_best("rmse")
 best_tree
 
+#set up workflow
 treefinal_wf <- tree_wf %>% 
   finalize_workflow(best_tree)
 
+#fit the final model
 treefinal_fit <- treefinal_wf %>% 
-  last_fit(data_split1) #fits for test data
+  fit(train_data1) 
 
-treefinal_fit %>% collect_metrics() #double check, higher than nullmodel
+#extract RMSE value
+treefinalfitted_rmse<- augment(treefinal_fit, train_data1) %>% 
+  select(BodyTemp, .pred) %>% 
+  rmse(truth = BodyTemp, .pred)
 ```
-
+The best performing tree model has a tree depth of 1 and and RMSE of *1.178* which is slightly better than the training null model of *1.209*. 
 ```{r}
-final_tree <- extract_workflow(treefinal_fit)
-
-final_tree %>% 
+#save for later comparison: RMSE based on predictions from best model
+tree_rmse <- tree_res %>% 
+  collect_predictions(parameters = best_tree) %>% 
+  rmse(BodyTemp, .pred) %>% 
+  mutate(model = "Tree")
+tree_rmse
+```
+The decision tree can be plotted using `rpart.plot()`. The level of importance for each predictor can be found using `vip()` function.
+```{r}
+#extract engine and plot decision tree
+treefinal_fit%>% 
   extract_fit_engine() %>% 
   rpart.plot(roundint = FALSE)
-```
 
-```{r}
-final_tree %>% 
+#plot importance of predictors
+treefinal_fit %>% 
   extract_fit_parsnip() %>% 
   vip()
 ```
-### Plots for Tree model - test data
-
+### Plots for Tree model
+We may also be interested in the predictions and residuals for the model compared to the actual outcomes. First, we need to create the predictions using `augment()` and the residuals using `mutate()`.
 ```{r}
-tree_test_resd <- augment(treefinal_fit) %>% 
+#create predictions and residuals
+tree_resd <- augment(treefinal_fit, train_data1) %>% 
   select(c(.pred, BodyTemp)) %>% 
   mutate(.resid = BodyTemp - .pred)
+
+#plot body temperature and predictions
+treeplot1 <- ggplot(tree_resd)+
+  geom_point(aes(BodyTemp, .pred))+
+  scale_x_continuous(limits = c(97,103.5))+
+  scale_y_continuous(limits = c(97,103.5))
+treeplot1
 ```
 
 ```{r}
-testtreeplot1 <- ggplot(tree_test_resd)+
-  geom_point(aes(BodyTemp, .pred))
-testtreeplot1
-```
-
-```{r}
-testtreeplot2 <- ggplot(tree_test_resd)+
+#plot body temperature and residuals
+treeplot2 <- ggplot(tree_resd)+
   geom_point(aes(BodyTemp,.resid))
-testtreeplot2
+treeplot2
 ```
-### Tree modeling with Training data
+The predictions and residuals show that the models do not perform well in predicting body temperature. 
 
+### Compare model to null
+
+As mentioned before, the tree model is only slightly better than the null model (RMSE of 1.88 (SE = 0.061) compared to 1.209). The fitted tree model has a RMSE of *1.178*.
 ```{r}
-treefinal_fit2 <- treefinal_wf %>% 
-  fit(data = train_data1) #fits for test data
+#metrics for best model
+tree_res %>% show_best()
+treefinalfitted_rmse
+```
 
-treefinal_fitaug <- augment(treefinal_fit2, train_data1) %>%
+### LASSO model specifications
+Next we will look at the LASSO model following the same general steps as the decision tree model. 
+```{r}
+#set LASSO model
+lm_modLASSO <- linear_reg(penalty = tune(), #penalties given for number of predictors
+                          mixture = 1) %>% 
+  set_engine("glmnet")
+```
+
+### LASSO model workflow
+```{r}
+#set LASSO workflow
+LASS_wf <- workflow() %>% 
+  add_model(lm_modLASSO) %>% 
+  add_recipe(ml_rec)
+```
+
+### LASSO model grid specifications
+We will use a similar grid method as before in order to tune the parameters of the models. 
+```{r}
+#create LASSO grid
+LASS_grid <-tibble(penalty = 10^seq(-4, -1, length.out = 30)) #creates a grid of penalty values to tune
+LASS_grid %>% top_n(-5) #lowest penalty values
+```
+Penalties will be highest for models with the most predictors. 
+
+### LASSO model tuning with cross-validation
+```{r}
+set.seed(123)
+LASS_res <-
+  LASS_wf %>% 
+  tune_grid(folds, #cross-validation
+            grid = LASS_grid, #penalty grid
+            control = control_grid(save_pred = TRUE), #save CV predictions to use later
+            metrics = metric_set(rmse)) #RMSE as metric
+```
+
+We can plot the metrics against penalty values.
+```{r}
+LASS_plot <- 
+  LASS_res %>% 
+  autoplot()
+
+LASS_plot 
+```
+We would like the lowest RMSE and the lowest penalty, so the best model should have an RMSE around 1.15.
+
+### LASSO model performance
+Using `select_best()` function and extracting the metrics will give us the model performance measure.
+```{r}
+#show top performing models
+LASS_showbest <- LASS_res %>% show_best()
+
+#select best model
+best_LASS_model <- LASS_res %>% 
+  select_best("rmse")
+best_LASS_model
+
+#update workflow with best model
+LASSfinal_wf <- LASS_wf %>% 
+  finalize_workflow(best_LASS_model)
+
+#fit the model to the training data
+LASSfinal_fit <- LASSfinal_wf %>% 
+  fit(train_data1) 
+
+#collect final RMSE
+LASSfinalfitted_rmse<- augment(LASSfinal_fit, train_data1) %>% 
+  select(BodyTemp, .pred) %>% 
   rmse(truth = BodyTemp, .pred)
-treefinal_fitaug
 ```
+The LASSO model (*RMSE = 1.117*) performed better than the decision tree model (*1.187*) and the null model (*1.209*).
 
 ```{r}
-treefinal_fit2 %>% 
-  extract_fit_parsnip() %>% 
-  vip()
+#save for later comparison: RMSE based on predictions from best model
+LASS_rmse <- LASS_res %>% 
+  collect_predictions(parameters = best_LASS_model) %>% 
+  rmse(BodyTemp, .pred) %>% 
+  mutate(model = "LASSO")
+LASS_rmse
 ```
 
-### Plots for Tree model - test data
-
+### Plots for LASSO model
+We can again plot the predictions and residuals against the outcome. 
 ```{r}
-tree_train_resd <- augment(treefinal_fit2, train_data1) %>% 
+#create predictions and residuals
+LASS_resd <- augment(LASSfinal_fit, train_data1) %>% 
   select(c(.pred, BodyTemp)) %>% 
   mutate(.resid = BodyTemp - .pred)
 ```
 
 ```{r}
-traintreeplot1 <- ggplot(tree_train_resd)+
-  geom_point(aes(BodyTemp, .pred))
-traintreeplot1
+#plots LASSO predictions and body temperature
+LASS_plot1 <- ggplot(LASS_resd)+
+  geom_point(aes(BodyTemp, .pred))+
+  scale_x_continuous(limits = c(97,103.5))+
+  scale_y_continuous(limits = c(97,103.5))
+LASS_plot1
 ```
 
 ```{r}
-traintreeplot2 <- ggplot(tree_train_resd)+
+#plots residuals and body temperature
+LASS_plot2 <- ggplot(LASS_resd)+
   geom_point(aes(BodyTemp,.resid))
-traintreeplot2
+LASS_plot2
 ```
-### LASSO model
+The prediction and residual plots show a better performance than the other two models we have looked at so far. 
+
+### Compare model to null model
+As mentioned, the LASSO model performs better than the null mode with a RMSE of *1.148 (SE = 0.0534)* compared the null model *(1.209)*. The fitted LASSO model has an RMSE of *1.117*.
+```{r}
+LASS_res %>% 
+  show_best() 
+LASSfinalfitted_rmse
+```
+
+### Random forest model specifications
+Finally, following the same steps are above, we can look at random forest models using cross-validation and tuning to find the best model.
+```{r}
+#how many cores your computer can use for running tuning on multiple models at the same time 
+cores <- parallel::detectCores()
+
+#set up random forest model
+rf_mod <- rand_forest(mtry = tune(), #parameter to tune
+                      min_n = tune(), #parameter to tune
+                      trees = 1000) %>% 
+  set_engine("ranger", num.threads = cores) %>% 
+  set_mode("regression")
+```
+
+### Random forest model workflow
+
+```{r}
+#create random forest recipe
+rf_rec <- recipe(BodyTemp ~ ., data = train_data1) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_ordinalscore()
+#create workflow
+rf_wf <- workflow() %>% 
+  add_model(rf_mod) %>% 
+  add_recipe(rf_rec)
+```
+
+### Random forest model grid specifications/tuning with cross-validation
+We will use a similar grid method for tuning model parameters
+```{r}
+#create grid for tuning parameters for cross-validation
+set.seed(123)
+rf_res <- rf_wf %>% 
+  tune_grid(folds,
+            grid = 25, #25 models
+            control = control_grid(save_pred = TRUE),
+            metrics = metric_set(rmse))
+```
+
+We can look at the best random forest models by RMSE values. 
+```{r}
+#show top performing models
+rf_showbest <- rf_res %>% show_best()
+
+rf_showbest
+```
+The best performing model has mtry (number of predictors at each node) = 8, min_n (min number of data points required to split) = 37 and RMSE of *1.158 (SE = 0.057)*. This is a better performing model compared to the null and other models.
+
+The `autoplot()` function visually shows the performance of the various models. 
+```{r}
+rf_res %>% autoplot()
+```
+We will extract the best model from the group using `select_best()`.
+```{r}
+#extract best model
+rf_best <-
+  rf_res %>% 
+  select_best(metric = "rmse")
+#show results
+rf_best
+```
+
+```{r}
+#collect predictions of best random forest model and calculate RMSE
+#save for later comparison: RMSE based on predictions from best model
+rf_rmse <-
+  rf_res %>% 
+  collect_predictions(parameters = rf_best) %>% 
+  rmse(truth = BodyTemp, estimate = .pred) %>% 
+  mutate(model = "Random Forest")
+rf_rmse
+```
+Using the best random forest model, the RMSE is *1.163* which is similar to the LASSO model.
+
+### Final fit for random forest model
+Now we can fit the model to the training data to get the final RMSE value.
+```{r}
+#set random forest model using best model parameters
+rffinal_mod <-
+  rand_forest(mtry = 8, min_n = 37, trees = 1000) %>% 
+  set_engine("ranger", num.threads = cores, importance = "impurity") %>% 
+  set_mode("regression")
+#update workflow
+rffinal_wf <- rf_wf %>% 
+  update_model(rffinal_mod)
+#fit to training data
+rffinal_fit <- rffinal_wf %>%
+  fit(train_data1)
+#pull RMSE from fitted model
+rffinalfitted_rmse <- augment(rffinal_fit, train_data1) %>% 
+  select(BodyTemp, .pred) %>% 
+  rmse(truth = BodyTemp, .pred)
+```
+The fitted random forest model RMSE is *1.028* which is slightly better than the LASSO model and better than the null and decision tree models. 
+
+We can also look at the important predictors for the random forest model using `vip()` function`
+```{r}
+rffinal_fit %>% 
+  extract_fit_parsnip() %>% 
+  vip(num_features = 20)
+```
+Sneezing remains as the most important predictor for body temperature followed closely by subjective fever.
+
+### Plots for Random forest model
+We will again plot the predictions and residuals for the model using `augment()`.
+```{r}
+#create predictions and residuals
+rf_resd <- augment(rffinal_fit, train_data1) %>% 
+  select(c(.pred, BodyTemp)) %>% 
+  mutate(.resid = BodyTemp - .pred)
+
+#plot body temperature and predictions
+rf_plot1 <- ggplot(rf_resd)+
+  geom_point(aes(BodyTemp,.pred))
+rf_plot1
+```
+
+```{r}
+#plot body temperature and residuals
+rf_plot2 <- ggplot(rf_resd)+
+  geom_point(aes(BodyTemp, .resid))
+rf_plot2
+```
+The residuals and prediction plots look similar to the LASSO model.
+
+### Compare model to null model
+
+```{r}
+rf_res %>% show_best() %>% arrange(mean) %>% top_n(1)
+```
+Compared to the null, the random forest model is a better predictor of body temperature with a *RMSE of 1.158 (SE = 0.057)* compared to *1.209*.
+
+## Choosing best model
+Now that we have looked at all of the models, we can choose the best model to test with our `test_data1` data set which has not been used during the tuning/fitting process. 
+```{r}
+#create comparison tibble for three models
+compare <- bind_rows(tree_rmse,LASS_rmse,rf_rmse)
+compare
+```
+Based on the RMSE metric, the best performing models are the LASSO and Random forest models. We can also check the uncertainty by looking at the plots shown above and the standard error. 
+
+```{r}
+LASS_showbest %>% head(1)
+rf_showbest %>% head(1)
+```
+Since the LASSO model has a lower SE than the random forest model, we will choose the LASSO model for testing the model on new data.
+
+## Final evaluation
+Now we can fit the LASSO model to the test data to check the RMSE on "new data".
+
+```{r}
+LASStest_fit <-
+  LASSfinal_wf %>% 
+  last_fit(data_split1)
+LASStest_fit %>% collect_metrics()
+```
+With the test data, the model has a RMSE of *1.16* which is slightly worse than the fitted model. This would make sense as the fitted model is designed off the `train_data1` set. 
+
+We will plot the same prediction and residual plots as before using the `test_data1` outcomes. They will look pretty similar to the fitted LASSO model since the RMSE is similar.
+```{r}
+#create predictions and residuals for test data
+LASStest_resd <- augment(LASStest_fit) %>% 
+  select(c(.pred, BodyTemp)) %>% 
+  mutate(.resid = BodyTemp - .pred)
+```
+
+```{r}
+#plots LASSO predictions and body temperature for test data
+LASS_plot3 <- ggplot(LASS_resd)+
+  geom_point(aes(BodyTemp, .pred))+
+  scale_x_continuous(limits = c(97,103.5))+
+  scale_y_continuous(limits = c(97,103.5))
+LASS_plot3
+```
+
+```{r}
+#plots residuals and body temperature for test data
+LASS_plot4 <- ggplot(LASS_resd)+
+  geom_point(aes(BodyTemp,.resid))
+LASS_plot4
+```
 
 
-### Random forest model
