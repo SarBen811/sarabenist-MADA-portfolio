@@ -2,6 +2,10 @@ This folder contains coding to clean and explore the fluanalysis data.
 
 The `wrangling.qmd` file should be run first to load raw data, clean and process data, and save the `cleandata` into the data folder.
 
-The `exploration.qmd` file should be run second to load cleaned data, explore the main outcomes (body temperature and nausea) amd main predictors (Weakness, CoughIntensity, Myalgia, and RunnyNose) through data summary and visualizations. 
+The `exploration.qmd` file should be run second to load cleaned data, explore the main outcomes (body temperature and nausea) and main predictors (Weakness, CoughIntensity, Myalgia, and RunnyNose) through data summary and visualizations. 
 
-The `fitting.qmd` should be run last to load the cleaned data and perform model fitting. The main outcomes are body temperature and nausea. RunnyNose will be the main predictor for each outcome and two other models will be run to predict each outcome from all symptoms. 
+The `fitting.qmd` file should be run next to load the cleaned data and perform model fitting. The main outcomes are body temperature and nausea. RunnyNose will be the main predictor for each outcome and two other models will be run to predict each outcome from all symptoms. 
+
+The `modeleval.qmd` file should be run next to load the cleaned data, split the data into testing and training sets, and run regression and classification models on the two main outcomes of interest.
+
+The `machinelearning.qmd` file should run last to load the cleaned data, split the data into training and testing sets, and perform three machine learning model fittings. The main outcome is body temperature. The models are tuned using cross-validation, and the final fitted model is evaluated using the test data. 

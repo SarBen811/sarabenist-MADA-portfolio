@@ -5,9 +5,7 @@ output:
     toc: FALSE
 ---
 
-*This page is the introductory coding exercise in R for this class. I
-will be working with the dslabs package data to perform data processing,
-visual plotting, and model fitting.*
+***This page is the introductory coding exercise in R for this class. I will be working with the dslabs package data to perform data processing, visual plotting, and model fitting.***
 
 ## Receiving and summarizing data
 
@@ -48,8 +46,7 @@ str(africadata)
 summary(africadata)
 ```
 
-Note that only rows where Africa is listed as the continent are in this
-dataset (2907 observations)
+Note that only rows where Africa is listed as the continent are in this dataset (2907 observations)
 
 ```{r Subset columns}
 #Now, pull out the columns 
@@ -71,9 +68,7 @@ summary(PopExpec)
 
 ```
 
-For both new objects, all observations were used (2907 rows) but each
-object has two columns (two variables each). All other variables
-(including country) have been removed.
+For both new objects, all observations were used (2907 rows) but each object has two columns (two variables each). All other variables (including country) have been removed.
 
 ## Plotting the data
 
@@ -95,21 +90,13 @@ ggplot(PopExpec) +
 
 ```
 
-Life expectancy has a negative correlation with infant mortality. As
-infant mortality increases, life expectancy decreases. The warning
-message indicated 226 data points could not be plotted.
+Life expectancy has a negative correlation with infant mortality. As infant mortality increases, life expectancy decreases. The warning message indicated 226 data points could not be plotted.
 
-Life expectancy has a positive correlation with population size. As
-population increases, life expectancy increases. Note that some data
-points seem to trend together; this is because the grouped data is from
-the same country over multiple years. The warning message indicated that
-51 points could not be plotted.
+Life expectancy has a positive correlation with population size. As population increases, life expectancy increases. Note that some data points seem to trend together; this is because the grouped data is from the same country over multiple years. The warning message indicated that 51 points could not be plotted.
 
 ## Data cleaning
 
-As noted in the plotting stage, there are some missing data points for
-some countries for some years. Let's try to find the years with missing
-data.
+As noted in the plotting stage, there are some missing data points for some countries for some years. Let's try to find the years with missing data.
 
 ```{r Finding NAs}
 #find years with missing 
@@ -119,8 +106,7 @@ data.
 africadata %>%    filter(is.na(infant_mortality))
 ```
 
-It looks like there is missing data for years 1960 to 1981 and 2016. To
-look at a full dataset for one year, we will focus on year 2000.
+It looks like there is missing data for years 1960 to 1981 and 2016. To look at a full dataset for one year, we will focus on year 2000.
 
 ```{r}
 #subset`africadata` to only 
@@ -131,15 +117,11 @@ str(fullyear)
 summary(fullyear)
 ```
 
-`fullyear` contains only data for year 2000 for the African countries.
-This is shown through the `summary` as the statistics all equal 2000 for
-the year column. The new dataset had 51 observations with 9 columns.
+`fullyear` contains only data for year 2000 for the African countries. This is shown through the `summary` as the statistics all equal 2000 for the year column. The new dataset had 51 observations with 9 columns.
 
 ## Plotting with full dataset (Year 2000)
 
-We will plot the same scatterplots as above with the `fullyear` dataset.
-There should not be any missing data, and no warning should pop up from
-removing data points.
+We will plot the same scatterplots as above with the `fullyear` dataset. There should not be any missing data, and no warning should pop up from removing data points.
 
 ```{r Scatter plots pt 2}
 #| label: fig3
@@ -159,16 +141,11 @@ ggplot(fullyear) +
 
 ```
 
-Based on these figures, we see a similar negative correlation between
-life expectancy and infant mortality as in the previous graphs. However,
-there does not appear to be a correlation between population size and
-life expectancy when looking at year 2000. To use a more objective
-measure to observe the relationship between population size and life
-expectancy, let's jump into statistical measures.
+Based on these figures, we see a similar negative correlation between life expectancy and infant mortality as in the previous graphs. However, there does not appear to be a correlation between population size and life expectancy when looking at year 2000. To use a more objective measure to observe the relationship between population size and life expectancy, let's jump into statistical measures.
 
 ## Linear modeling
 
-```{r} 
+```{r}
 #fitting linear model for population size
 #predicting life expectancy
 fit1 <- lm(life_expectancy~infant_mortality, data = fullyear)
@@ -178,28 +155,27 @@ fit2 <- lm(life_expectancy~population, data = fullyear)
 summary(fit1)
 summary(fit2)
 ```
-Looking at the summary results, infant mortality appears to be a valid predictor of life expectancy (p-value<0.001). Life expectancy decreases by 0.189 years with each increase in infant mortality (SE = 0.029, t = -6.594). 
+
+Looking at the summary results, infant mortality appears to be a valid predictor of life expectancy (p-value\<0.001). Life expectancy decreases by 0.189 years with each increase in infant mortality (SE = 0.029, t = -6.594).
 
 Population size is not a valid predictor of life expectancy because the p-value is 0.616 which is not statistically significant.
-
-
-
-
 
 *Nathan Greenslit's Work Below*
 
 # Load Broom Library
+
 ```{r}
 library(broom)
 ```
 
-
 # Looking at whole dataset
+
 ```{r}
 gapminder<- gapminder
 ```
 
 # Looking at only the United States
+
 ```{r}
 us <-
   gapminder %>% 
@@ -207,18 +183,19 @@ us <-
 str(us)
 summary(us) 
 ```
+
 *Looks like 2016 has NA*
 
 # Filter out NAs in 2016 in Fertility
+
 ```{r}
 us.clean <- 
   us %>%
   filter(!is.na(fertility))
 ```
 
-
-
 # Fertility in the US over time
+
 ```{r}
 us.clean %>% ggplot() +
   geom_point(
@@ -238,9 +215,11 @@ us.clean %>% ggplot() +
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5))
 ```
+
 *There is a significant drop in the number of children per woman over time. There could be due to a few things: (1) An increase in women's empowerment in the workforce, (2) increased cost of raising children, and (3) lower child mortality. With the data set we have, I am using infant_mortality to explore the 3rd hypothesis: a decrease in child mortality is correlated to a drop in children per woman.*
 
 # Infant Mortality in the US over time
+
 ```{r}
 us.clean %>% ggplot() +
   geom_point(
@@ -262,6 +241,7 @@ us.clean %>% ggplot() +
 ```
 
 # Fertility as a function of Infant Mortality
+
 ```{r}
 us.clean %>% ggplot() +
   geom_point(
@@ -286,20 +266,17 @@ geom_smooth(aes(
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-
 # Linear Model to examine correlation between Fertility Drop and Decrease in Infant Mortality
+
 ```{r, results = FALSE}
 fert.fit <- lm(infant_mortality~fertility, data = us.clean)
 summary(fert.fit)
 ```
 
-
 # Making lm() output to a table using `broom` package
+
 ```{r}
 tidy(fert.fit)
 ```
+
 *A p-value of 5.38E-11 may indicate that there is a significant correlation between the drop in fertility and decrease in infant mortality in the US. An R2 value of .54 indicates that infant mortality is an okay predictor of fertility, but there is most likely other variables that play a role.*
-
-
-
-

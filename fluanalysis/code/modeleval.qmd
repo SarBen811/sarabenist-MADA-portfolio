@@ -3,7 +3,7 @@ title: "Model Evaluation"
 output: html_document
 ---
 
-This script will use the flu analysis data to evaluate the model predicting the main categorical outcome `Nausea` and main continuous outcome `BodyTemp`.
+***This exercise is the fourth in the flu analysis series. This page will use the `tidymodels` guide to split the data into testing and training sets and run regression and classification models on the two main outcomes of interest: the main categorical outcome `Nausea` and main continuous outcome `BodyTemp`.***
 
 ## Load packages
 

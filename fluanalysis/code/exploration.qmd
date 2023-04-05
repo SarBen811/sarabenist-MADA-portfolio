@@ -3,6 +3,8 @@ title: "Exploration"
 output: html_document
 ---
 
+***This exercise is the second in the flu analysis series. This page loads the cleaned data, explores the main outcomes (body temperature and nausea) and main predictors (Weakness, CoughIntensity, Myalgia, and RunnyNose) through data summary and visualizations.***
+
 The `Wrangling` script cleaned the raw data from the flu analysis. We will explore the data and look at the symptomatic variables. The main outcomes of interest are `Body Temperature` and `Nausea`. The other symptoms will be considered for predictors.
 
 ## Load packages

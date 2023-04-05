@@ -3,7 +3,8 @@ title: "Fitting"
 output: html_document
 ---
 
-This script will use the flu analysis data to create and fit models for the two main outcomes (body temperature and nausea) against one predictor (runny nose) and a full model with all symptoms. 
+***This exercise is the third in the flu analysis series. This page will use the flu analysis data to create and fit models for the two main outcomes (body temperature and nausea) against one predictor (runny nose) and a full model with all symptoms.***
+
 ## Load packages
 
 ```{r}

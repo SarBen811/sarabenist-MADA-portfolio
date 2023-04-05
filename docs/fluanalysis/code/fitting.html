@@ -152,20 +152,34 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-projects">    
         <li>
-    <a class="dropdown-item" href="../.././coding_exercise.html">
+    <a class="dropdown-item" href="../.././coding_exercise.html"><i class="bi bi-chevron-double-right" role="img">
+</i> 
  <span class="dropdown-text">R Coding Exercise</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../.././visualization_exercise.html">
+    <a class="dropdown-item" href="../.././visualization_exercise.html"><i class="bi bi-chevron-double-right" role="img">
+</i> 
  <span class="dropdown-text">Visualization Exercise</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../.././tidytuesday_exercise.html">
+    <a class="dropdown-item" href="../.././tidytuesday_exercise.html"><i class="bi bi-chevron-double-right" role="img">
+</i> 
  <span class="dropdown-text">Tidy Tuesday Exercise</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../.././dataanalysis_exercise.html">
+    <a class="dropdown-item" href="../.././dataanalysis_exercise.html"><i class="bi bi-chevron-double-right" role="img">
+</i> 
  <span class="dropdown-text">Data Analysis Exercise</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../.././tidytuesday_exercise2.html"><i class="bi bi-chevron-double-right" role="img">
+</i> 
+ <span class="dropdown-text">Tidy Tuesday Exercise 2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../.././tuberculosis_project.html"><i class="bi bi-chevron-double-right" role="img">
+</i> 
+ <span class="dropdown-text">Project</span></a>
   </li>  
     </ul>
   </li>
@@ -175,20 +189,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-flu-analysis">    
         <li>
-    <a class="dropdown-item" href="../.././fluanalysis/code/wrangling.html">
+    <a class="dropdown-item" href="../.././fluanalysis/code/wrangling.html"><i class="bi bi-chevron-double-right" role="img">
+</i> 
  <span class="dropdown-text">Wrangling</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../.././fluanalysis/code/exploration.html">
+    <a class="dropdown-item" href="../.././fluanalysis/code/exploration.html"><i class="bi bi-chevron-double-right" role="img">
+</i> 
  <span class="dropdown-text">Exploring</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../.././fluanalysis/code/fitting.html">
+    <a class="dropdown-item" href="../.././fluanalysis/code/fitting.html"><i class="bi bi-chevron-double-right" role="img">
+</i> 
  <span class="dropdown-text">Fitting</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../.././fluanalysis/code/modeleval.html">
+    <a class="dropdown-item" href="../.././fluanalysis/code/modeleval.html"><i class="bi bi-chevron-double-right" role="img">
+</i> 
  <span class="dropdown-text">Model Evaluation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../.././fluanalysis/code/machinelearning.html"><i class="bi bi-chevron-double-right" role="img">
+</i> 
+ <span class="dropdown-text">Machine Learning</span></a>
   </li>  
     </ul>
   </li>
@@ -196,6 +219,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/SarBen811/sarabenist-MADA-portfolio"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sara-benist-47078517a/"><i class="bi bi-linkedin" role="img">
 </i> 
  <span class="menu-text"></span></a>
   </li>  
@@ -230,13 +258,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<p>This script will use the flu analysis data to create and fit models for the two main outcomes (body temperature and nausea) against one predictor (runny nose) and a full model with all symptoms. ## Load packages</p>
+<p><strong><em>This exercise is the third in the flu analysis series. This page will use the flu analysis data to create and fit models for the two main outcomes (body temperature and nausea) against one predictor (runny nose) and a full model with all symptoms.</em></strong></p>
+<section id="load-packages" class="level2">
+<h2 class="anchored" data-anchor-id="load-packages">Load packages</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
 <section id="load-data" class="level2">
 <h2 class="anchored" data-anchor-id="load-data">Load data</h2>
 <p>Load the cleaned data from the <code>data</code> folder. Reassign as <code>flu</code>.</p>
@@ -286,7 +317,7 @@ release of broom.</code></pre>
 <pre><code># A tibble: 1 × 13
   column     n  mean    sd median trimmed   mad   min   max range      skew
   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
-1 .pred     64  99.0 0.147   99.0    99.0 0.146  98.9  99.1 0.293 -1.46e-13
+1 .pred     56  99.0 0.148   99.0    99.0 0.146  98.9  99.1 0.293 -1.46e-13
 # … with 2 more variables: kurtosis &lt;dbl&gt;, se &lt;dbl&gt;</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>conf_int_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(RNlm_fit,</span>
@@ -322,20 +353,20 @@ release of broom.</code></pre>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(BodyTemp <span class="sc">~</span> ., <span class="at">data =</span> flu) <span class="co">#use all symptoms (including nausea) as predictors</span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(ASlm_fit) <span class="co">#summary of fit</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 38 × 5
+<pre><code># A tibble: 34 × 5
    term                 estimate std.error statistic   p.value
    &lt;chr&gt;                   &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
- 1 (Intercept)           97.9       0.304   322.     0        
- 2 SwollenLymphNodesYes  -0.165     0.0920   -1.80   0.0727   
- 3 ChestCongestionYes     0.0873    0.0975    0.895  0.371    
- 4 ChillsSweatsYes        0.201     0.127     1.58   0.114    
- 5 NasalCongestionYes    -0.216     0.114    -1.90   0.0584   
- 6 CoughYNYes             0.314     0.241     1.30   0.193    
- 7 SneezeYes             -0.362     0.0983   -3.68   0.000249 
- 8 FatigueYes             0.265     0.161     1.65   0.0996   
- 9 SubjectiveFeverYes     0.437     0.103     4.22   0.0000271
-10 HeadacheYes            0.0115    0.125     0.0913 0.927    
-# … with 28 more rows</code></pre>
+ 1 (Intercept)          97.9        0.304   323.     0        
+ 2 SwollenLymphNodesYes -0.167      0.0920   -1.81   0.0703   
+ 3 ChestCongestionYes    0.0993     0.0972    1.02   0.307    
+ 4 ChillsSweatsYes       0.192      0.127     1.51   0.132    
+ 5 NasalCongestionYes   -0.220      0.114    -1.94   0.0534   
+ 6 SneezeYes            -0.366      0.0983   -3.72   0.000213 
+ 7 FatigueYes            0.268      0.161     1.67   0.0959   
+ 8 SubjectiveFeverYes    0.444      0.103     4.30   0.0000192
+ 9 HeadacheYes           0.00654    0.125     0.0522 0.958    
+10 WeaknessMild          0.0110     0.189     0.0580 0.954    
+# … with 24 more rows</code></pre>
 </div>
 </div>
 <p>The symptoms with positive estimates predict higher body temperature and the negative estimates predict lower body temperature. No one symptom appears to be a strong predictor, and the some variables produced an NA.</p>
@@ -346,7 +377,7 @@ release of broom.</code></pre>
 <pre><code># A tibble: 1 × 12
   r.squ…¹ adj.r…² sigma stati…³ p.value    df logLik   AIC   BIC devia…⁴ df.re…⁵
     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;int&gt;
-1   0.129  0.0860  1.14    3.02 4.20e-8    34 -1116. 2304. 2469.    909.     695
+1   0.127  0.0851  1.14    3.06 4.24e-8    33 -1117. 2304. 2464.    911.     696
 # … with 1 more variable: nobs &lt;int&gt;, and abbreviated variable names
 #   ¹​r.squared, ²​adj.r.squared, ³​statistic, ⁴​deviance, ⁵​df.residual</code></pre>
 </div>
@@ -364,7 +395,7 @@ release of broom.</code></pre>
 Name     | Model |  AIC (weights) | AICc (weights) |  BIC (weights) |    R2 | R2 (adj.) |  RMSE | Sigma
 -------------------------------------------------------------------------------------------------------
 RNlm_fit |   _lm | 2329.3 (&lt;.001) | 2329.4 (&lt;.001) | 2343.1 (&gt;.999) | 0.012 |     0.011 | 1.188 | 1.190
-ASlm_fit |   _lm | 2303.8 (&gt;.999) | 2307.7 (&gt;.999) | 2469.2 (&lt;.001) | 0.129 |     0.086 | 1.116 | 1.144</code></pre>
+ASlm_fit |   _lm | 2303.6 (&gt;.999) | 2307.3 (&gt;.999) | 2464.4 (&lt;.001) | 0.127 |     0.085 | 1.117 | 1.144</code></pre>
 </div>
 </div>
 <p>The AIC and R2 are both estimates of how well the models fit the data by determining how much variation in the data is explained by the model. Considering the R2, the all symptom model is a better fit than the runny nose model because the R2 is higher. In addition, a better fitted model will have a lower AIC, which also supports the all symptom model as a better fit.</p>
@@ -402,20 +433,20 @@ ASlm_fit |   _lm | 2303.8 (&gt;.999) | 2307.7 (&gt;.999) | 2469.2 (&lt;.001) | 0
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(ASlog_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 38 × 5
+<pre><code># A tibble: 34 × 5
    term                 estimate std.error statistic p.value
    &lt;chr&gt;                   &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
- 1 (Intercept)             0.223     7.83     0.0285  0.977 
- 2 SwollenLymphNodesYes   -0.251     0.196   -1.28    0.200 
- 3 ChestCongestionYes      0.276     0.213    1.30    0.195 
- 4 ChillsSweatsYes         0.274     0.288    0.952   0.341 
- 5 NasalCongestionYes      0.426     0.255    1.67    0.0944
- 6 CoughYNYes             -0.140     0.519   -0.271   0.787 
- 7 SneezeYes               0.177     0.210    0.840   0.401 
- 8 FatigueYes              0.229     0.372    0.616   0.538 
- 9 SubjectiveFeverYes      0.278     0.225    1.23    0.218 
-10 HeadacheYes             0.331     0.285    1.16    0.245 
-# … with 28 more rows</code></pre>
+ 1 (Intercept)             0.355     7.81     0.0454  0.964 
+ 2 SwollenLymphNodesYes   -0.249     0.196   -1.27    0.203 
+ 3 ChestCongestionYes      0.268     0.211    1.27    0.203 
+ 4 ChillsSweatsYes         0.279     0.287    0.970   0.332 
+ 5 NasalCongestionYes      0.427     0.254    1.68    0.0931
+ 6 SneezeYes               0.178     0.210    0.845   0.398 
+ 7 FatigueYes              0.229     0.372    0.617   0.537 
+ 8 SubjectiveFeverYes      0.273     0.225    1.22    0.224 
+ 9 HeadacheYes             0.333     0.285    1.17    0.242 
+10 WeaknessMild           -0.118     0.447   -0.264   0.792 
+# … with 24 more rows</code></pre>
 </div>
 </div>
 <p>Similar to the continuous outcome, the logistic regression estimates are positive if they increase the probability of having nausea and negative if they decrease the probability of having nausea.The same variables produced an NA in the model fitting.</p>
@@ -425,26 +456,13 @@ ASlm_fit |   _lm | 2303.8 (&gt;.999) | 2307.7 (&gt;.999) | 2469.2 (&lt;.001) | 0
 <p>We can once again compare the models using the <code>compare_performance</code> function.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_performance</span>(RNlog_fit,ASlog_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
-prediction from a rank-deficient fit may be misleading
-
-Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
-prediction from a rank-deficient fit may be misleading
-
-Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
-prediction from a rank-deficient fit may be misleading
-
-Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
-prediction from a rank-deficient fit may be misleading</code></pre>
-</div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Comparison of Model Performance Indices
 
 Name      | Model | AIC (weights) | AICc (weights) | BIC (weights) | Tjur's R2 |  RMSE | Sigma | Log_loss | Score_log | Score_spherical |   PCP
 -----------------------------------------------------------------------------------------------------------------------------------------------
 RNlog_fit |  _glm | 948.6 (&lt;.001) |  948.6 (&lt;.001) | 957.8 (&gt;.999) | 1.169e-04 | 0.477 | 1.139 |    0.647 |  -107.871 |           0.012 | 0.545
-ASlog_fit |  _glm | 821.5 (&gt;.999) |  825.1 (&gt;.999) | 982.2 (&lt;.001) |     0.247 | 0.414 | 1.040 |    0.515 |      -Inf |           0.002 | 0.658</code></pre>
+ASlog_fit |  _glm | 819.5 (&gt;.999) |  823.0 (&gt;.999) | 975.7 (&lt;.001) |     0.247 | 0.414 | 1.039 |    0.515 |      -Inf |           0.002 | 0.658</code></pre>
 </div>
 </div>
 <p>Following the same reasoning with the R2 and AIC that we used with the linear models, the all symptom model is a better fit of the data and explains more of the variation than the univariate model alone.</p>

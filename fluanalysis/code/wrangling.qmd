@@ -2,6 +2,9 @@
 title: "Wrangling"
 output: html_document
 ---
+
+***This exercise is the first in the series on evaluating influenza data. This page will wrangle/clean the raw data.***
+
 This code script uses the data from this paper: McKay, Brian et al. (2020), Virulence-mediated infectiousness and activity trade-offs and their impact on transmission potential of patients infected with influenza, Dryad, Dataset, https://doi.org/10.5061/dryad.51c59zw4v. The raw data has been placed in the `data` file of this repository.
 
 

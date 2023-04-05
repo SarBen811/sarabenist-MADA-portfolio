@@ -1,0 +1,7 @@
+---
+title: "Tuberculosis Project"
+output: html_document
+---
+
+I will be adding a summary of my final project on tuberculosis and health inequity indicators and a link to my project repository on this page. 
+

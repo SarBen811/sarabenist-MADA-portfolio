@@ -3,6 +3,8 @@ title: "Machine Learning"
 output: html_document
 ---
 
+***This exercise is the fifth in flu analysis series. This page will follow the `tidymodels` method to train and fit three machine learning models on the main continuous outcome `BodyTemp`.***
+
 For the machine learning exercise, we will use the `flu` data and focus on Body Temperature as the outcome. We will be using the Decision Tree model, LASSO model, and Random forest model to determine the best performing model.
 
 ## Load packages

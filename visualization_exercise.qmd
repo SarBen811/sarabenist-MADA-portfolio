@@ -5,6 +5,8 @@ output:
     toc: FALSE
 ---
 
+***For this exercise, I will be attempting to recreate a plot from a FiveThirtyEight article using ggplot functions.***
+
 ## Data source and description
 
 The data I will use is from the FiveThirtyEight article ["Some People Are Too Superstitious To Have A Baby On Friday The 13th"](https://fivethirtyeight.com/features/some-people-are-too-superstitious-to-have-a-baby-on-friday-the-13th/) and the associated [GitHub repository](https://github.com/fivethirtyeight/data/tree/master/births). This article uses data from the National Center for Health Statistics (1994 - 2003) and the Social Security Administration (2000 - 2014). The two data files contain information on the year, month, date (as in number of the month), day of the week (1 represents Monday and 7 represents Sunday), and number of births for each date. For this exercise, I will be attempting to remake the first figure of the article shown below. ![](VEorignalgraph.webp){width="451"}

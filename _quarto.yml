@@ -11,28 +11,45 @@ website:
       - text: "Projects"
         menu:
           - text: "R Coding Exercise"
+            icon: chevron-double-right
             href: ./coding_exercise.html
           - text: "Visualization Exercise"
+            icon: chevron-double-right
             href: ./visualization_exercise.html
           - text: "Tidy Tuesday Exercise"
+            icon: chevron-double-right
             href: ./tidytuesday_exercise.html
           - text: "Data Analysis Exercise"
+            icon: chevron-double-right
             href: ./dataanalysis_exercise.html
+          - text: "Tidy Tuesday Exercise 2"
+            icon: chevron-double-right
+            href: ./tidytuesday_exercise2.html
+          - text: "Project"
+            icon: chevron-double-right
+            href: ./tuberculosis_project.html
       - text: "Flu Analysis"
-        menu: 
+        menu:
           - text: "Wrangling"
+            icon: chevron-double-right
             href: ./fluanalysis/code/wrangling.html
           - text: "Exploring"
+            icon: chevron-double-right
             href: ./fluanalysis/code/exploration.html
           - text: "Fitting"
+            icon: chevron-double-right
             href: ./fluanalysis/code/fitting.html
           - text: "Model Evaluation"
+            icon: chevron-double-right
             href: ./fluanalysis/code/modeleval.html
           - text: "Machine Learning"
+            icon: chevron-double-right
             href: ./fluanalysis/code/machinelearning.html
     right:
       - icon: github 
-        href: https://github.com/SarBen811/sarabenist-MADA-portfolio        
+        href: https://github.com/SarBen811/sarabenist-MADA-portfolio
+      - icon: linkedin
+        href: https://www.linkedin.com/in/sara-benist-47078517a/
 
 format:
   html:
@@ -44,5 +61,7 @@ format:
 execute: 
   freeze: auto
   
+
+
 
 
