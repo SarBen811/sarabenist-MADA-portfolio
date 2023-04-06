@@ -1,6 +1,11 @@
 ---
 title: "Wrangling"
 output: html_document
+format:
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
 ---
 
 ***This exercise is the first in the series on evaluating influenza data. This page will wrangle/clean the raw data.***

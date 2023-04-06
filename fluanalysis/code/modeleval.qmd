@@ -1,6 +1,11 @@
 ---
 title: "Model Evaluation"
 output: html_document
+format:
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
 ---
 
 ***This exercise is the fourth in the flu analysis series. This page will use the `tidymodels` guide to split the data into testing and training sets and run regression and classification models on the two main outcomes of interest: the main categorical outcome `Nausea` and main continuous outcome `BodyTemp`.***

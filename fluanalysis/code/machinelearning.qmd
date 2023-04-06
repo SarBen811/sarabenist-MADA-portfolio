@@ -1,6 +1,11 @@
 ---
 title: "Machine Learning"
 output: html_document
+format:
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
 ---
 
 ***This exercise is the fifth in flu analysis series. This page will follow the `tidymodels` method to train and fit three machine learning models on the main continuous outcome `BodyTemp`.***

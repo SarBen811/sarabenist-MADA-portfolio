@@ -1,6 +1,11 @@
 ---
 title: "Exploration"
 output: html_document
+format:
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
 ---
 
 ***This exercise is the second in the flu analysis series. This page loads the cleaned data, explores the main outcomes (body temperature and nausea) and main predictors (Weakness, CoughIntensity, Myalgia, and RunnyNose) through data summary and visualizations.***

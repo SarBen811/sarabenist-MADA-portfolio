@@ -126,7 +126,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -236,8 +236,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#data-source-and-description" id="toc-data-source-and-description" class="nav-link active" data-scroll-target="#data-source-and-description">Data source and description</a></li>
+  <li><a href="#data-loading" id="toc-data-loading" class="nav-link" data-scroll-target="#data-loading">Data loading</a></li>
+  <li><a href="#join-data-sets-from-sources" id="toc-join-data-sets-from-sources" class="nav-link" data-scroll-target="#join-data-sets-from-sources">Join data sets from sources</a></li>
+  <li><a href="#manipulate-data" id="toc-manipulate-data" class="nav-link" data-scroll-target="#manipulate-data">Manipulate data</a></li>
+  <li><a href="#plot-graph" id="toc-plot-graph" class="nav-link" data-scroll-target="#plot-graph">Plot graph</a></li>
+  <li><a href="#troublesissues" id="toc-troublesissues" class="nav-link" data-scroll-target="#troublesissues">Troubles/Issues</a></li>
+  </ul>
+</nav>
+</nav>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
@@ -324,16 +339,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code># A tibble: 10 × 5
     year month date_of_month day_of_week births
    &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt;       &lt;dbl&gt;  &lt;dbl&gt;
- 1  2013    12             5           4  12437
- 2  2001     9             9           7   8184
- 3  1999     8            10           2  13035
- 4  2006     2             4           6   8647
- 5  2002     5            24           5  12775
- 6  2012     5            20           7   7202
- 7  2002     9             2           1   8085
- 8  1999     8            13           5  11924
- 9  1998     7            11           6   8996
-10  2011     8            26           5  12910</code></pre>
+ 1  2006     2            28           2  13223
+ 2  2006    12            11           1  12803
+ 3  1994     3            21           1  11140
+ 4  2002     4             4           4  12262
+ 5  2006    10            23           1  12836
+ 6  2006    11            24           5   9640
+ 7  2002     4            15           1  11412
+ 8  2009     6            13           6   8376
+ 9  2013     5            29           3  13062
+10  2012     9             1           6   8967</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#summary of dataset and check for joining issues</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fulldata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

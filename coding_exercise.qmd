@@ -1,8 +1,11 @@
 ---
 title: "R Coding Exercise"
-output:
-  html_document:
-    toc: FALSE
+output: html_document
+format:
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
 ---
 
 ***This page is the introductory coding exercise in R for this class. I will be working with the dslabs package data to perform data processing, visual plotting, and model fitting.***

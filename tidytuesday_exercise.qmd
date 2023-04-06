@@ -1,8 +1,11 @@
 ---
 title: "Tidy Tuesday Exercise"
-output: 
-  html_document:
-    toc: FALSE
+output: html_document
+format:
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
 ---
 
 ***For this exercise, I will be using data cleaning and exploratory analysis on this week's TidyTuesday data set. The data is on [Hollywood Age Gaps](https://github.com/rfordatascience/tidytuesday/tree/master/data/2023/2023-02-14) showing the age difference between love interests on various films. The data set includes variables for Movie Title, Release Year, Director, and various character-related information.***

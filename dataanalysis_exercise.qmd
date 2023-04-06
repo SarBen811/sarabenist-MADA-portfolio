@@ -1,6 +1,11 @@
 ---
 title: "Data Analysis Exercise"
 output: html_document
+format:
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 2
 ---
 
 ***This page will be used for my first exercise in data analysis involving data importing and wrangling.***

@@ -126,7 +126,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -236,8 +236,34 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#load-packages" id="toc-load-packages" class="nav-link active" data-scroll-target="#load-packages">Load packages</a></li>
+  <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data">Load data</a></li>
+  <li><a href="#data-splitting" id="toc-data-splitting" class="nav-link" data-scroll-target="#data-splitting">Data splitting</a></li>
+  <li><a href="#create-a-recipe-and-workflow-from-all-symptoms" id="toc-create-a-recipe-and-workflow-from-all-symptoms" class="nav-link" data-scroll-target="#create-a-recipe-and-workflow-from-all-symptoms">Create a recipe and workflow from all symptoms</a></li>
+  <li><a href="#predict-from-trained-model" id="toc-predict-from-trained-model" class="nav-link" data-scroll-target="#predict-from-trained-model">Predict from trained model</a></li>
+  <li><a href="#create-recipe-with-runny-nose-as-predictor" id="toc-create-recipe-with-runny-nose-as-predictor" class="nav-link" data-scroll-target="#create-recipe-with-runny-nose-as-predictor">Create recipe with runny nose as predictor</a></li>
+  <li><a href="#this-section-added-by-leah-lariscy" id="toc-this-section-added-by-leah-lariscy" class="nav-link" data-scroll-target="#this-section-added-by-leah-lariscy">This section added by Leah Lariscy</a>
+  <ul class="collapse">
+  <li><a href="#create-workflow-for-a-linear-regression" id="toc-create-workflow-for-a-linear-regression" class="nav-link" data-scroll-target="#create-workflow-for-a-linear-regression">Create workflow for a linear regression</a></li>
+  <li><a href="#data-fitting" id="toc-data-fitting" class="nav-link" data-scroll-target="#data-fitting">Data fitting</a></li>
+  <li><a href="#model-evaluation-on-training-data" id="toc-model-evaluation-on-training-data" class="nav-link" data-scroll-target="#model-evaluation-on-training-data">Model evaluation on training data</a></li>
+  <li><a href="#model-evaluation-on-testing-data" id="toc-model-evaluation-on-testing-data" class="nav-link" data-scroll-target="#model-evaluation-on-testing-data">Model evaluation on testing data</a></li>
+  <li><a href="#create-workflow-for-linear-regression-pt.-2" id="toc-create-workflow-for-linear-regression-pt.-2" class="nav-link" data-scroll-target="#create-workflow-for-linear-regression-pt.-2">Create workflow for linear regression pt.&nbsp;2</a></li>
+  <li><a href="#data-fitting-1" id="toc-data-fitting-1" class="nav-link" data-scroll-target="#data-fitting-1">Data fitting</a></li>
+  <li><a href="#model-evaluation-on-training-data-1" id="toc-model-evaluation-on-training-data-1" class="nav-link" data-scroll-target="#model-evaluation-on-training-data-1">Model evaluation on training data</a></li>
+  <li><a href="#model-evaluation-on-testing-data-1" id="toc-model-evaluation-on-testing-data-1" class="nav-link" data-scroll-target="#model-evaluation-on-testing-data-1">Model evaluation on testing data</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
