@@ -13,15 +13,15 @@ website:
           - text: "R Coding Exercise"
             icon: chevron-double-right
             href: ./coding_exercise.html
+          - text: "Data Analysis Exercise"
+            icon: chevron-double-right
+            href: ./dataanalysis_exercise.html
           - text: "Visualization Exercise"
             icon: chevron-double-right
             href: ./visualization_exercise.html
           - text: "Tidy Tuesday Exercise"
             icon: chevron-double-right
             href: ./tidytuesday_exercise.html
-          - text: "Data Analysis Exercise"
-            icon: chevron-double-right
-            href: ./dataanalysis_exercise.html
           - text: "Tidy Tuesday Exercise 2"
             icon: chevron-double-right
             href: ./tidytuesday_exercise2.html

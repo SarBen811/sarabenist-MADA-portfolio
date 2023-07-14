@@ -3,5 +3,12 @@ title: "Tuberculosis Project"
 output: html_document
 ---
 
-I will be adding a summary of my final project on tuberculosis and health inequity indicators and a link to my project repository on this page. 
+***Below is the abstract of my final manuscript for this course. The full paper, data sets, and code can be found in the GitHub repository listed below.***
 
+Tuberculosis is the leading infectious cause of death, and the burden of TB is disproportionately concentrated in several high burden countries. The reason for the disparity between countries and populations of specific demographics is not fully understood. The World Health Organization collects annual data on tuberculosis outcomes through the Global Tuberculosis Programme with the goal of reducing TB incidence worldwide. To further explore the reasons behind the health inequity surrounding tuberculosis, this analysis explores the health equity indicators collected by WHO and attempts to predict tuberculosis outcomes.
+
+The project cleans and summarizes the health equity indicators to explore disparities within the indicators based on level of income, education, sex, place of residence, and presence of drug-resistant strains. The data set was also subset into high burden countries to explore difference between high burden countries and all countries. Linear regression along with decision tree and boosted tree modelling using cross-validation tuning were conducted with predict tuberculosis outcomes and level of equity indicators.
+
+Males have a higher proportion of cases compared to females, and level of income and education had the largest disparity between the highest and lowest levels. The prediction models did not perform well in predicting tuberculosis outcomes, most likely due to the aggregate nature of the data. More research needs to be conducted to measure the direct relationship between the health equity indicators and tuberculosis outcomes.
+
+[**Visit the [repository](https://github.com/SarBen811/sarabenist-MADA-project) to view the full paper.**]{.underline}

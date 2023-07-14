@@ -1,5 +1,5 @@
 ---
-title: "Portfolio for Modern Applied Data Analysis"
+title: "Portfolio Website for Modern Applied Data Analysis Course"
 output: 
   html_document:
     toc: FALSE
@@ -9,9 +9,9 @@ output:
 
 ### Welcome to my webpage!
 
-This website was created for my _Data Analysis class_ at the University of Georgia. 
+This website was created for my _Modern Applied Data Analysis class_ at the University of Georgia in Spring 2023. The course consisted of basic R coding, graphs and visualizations, and data analysis methods.
 
 
-* Please use the `Menu Bar` above to look around.
-* Have fun!
-* Contact me at sara.benist25@uga.edu
+* Please use the `Menu Bar` above to look around. The *Projects* and *Flu Analysis* menus have examples of course content and R coding exercises.
+* Have fun! All code and data sets can be downloaded at the GitHub repository linked on the banner.
+* Contact me at scbenist@gmail.com for any questions.
